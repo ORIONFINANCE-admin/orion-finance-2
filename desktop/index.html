@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>Orion Finance Desktop</title>
+  <link rel="stylesheet" href="../core/theme.css">
+  <link rel="stylesheet" href="./desktop.css">
+</head>
+<body>
+  <div class="desktop-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-dot"></span><b>ORION</b></div>
+      <nav>
+        <button class="side-btn active" data-view="dashboardView">⌂ <span>Visão geral</span></button>
+        <button class="side-btn" data-view="movementsView">↕ <span>Movimentações</span></button>
+        <button id="syncBtn" class="side-btn">↻ <span>Sincronizar</span></button>
+      </nav>
+      <button id="settingsBtn" class="side-btn settings">⚙ <span>Configurações</span></button>
+    </aside>
+
+    <main class="workspace">
+      <header class="workspace-header">
+        <div><span class="eyebrow">ORION FINANCE</span><h1>Como está seu dinheiro?</h1></div>
+        <button id="quickAddBtn" class="primary-btn">+ Novo movimento</button>
+      </header>
+
+      <div id="syncBanner" class="sync-banner hidden">
+        <span>Há dados mais recentes na base central.</span>
+        <button id="syncBannerBtn">Sincronizar agora</button>
+      </div>
+
+      <section id="dashboardView" class="desktop-view">
+        <div class="kpi-grid">
+          <article class="kpi primary"><small>Saldo total</small><strong id="saldoTotal">R$ 0,00</strong></article>
+          <article class="kpi"><small>Entradas do mês</small><strong id="entradasMes">R$ 0,00</strong></article>
+          <article class="kpi"><small>Saídas do mês</small><strong id="saidasMes">R$ 0,00</strong></article>
+          <article class="kpi"><small>Resultado</small><strong id="resultadoMes">R$ 0,00</strong></article>
+        </div>
+
+        <div class="content-grid">
+          <section class="panel">
+            <div class="panel-head"><h2>Contas</h2><button id="addAccountBtn">+ Adicionar</button></div>
+            <div id="accountsGrid" class="accounts-grid"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head"><h2>Últimas movimentações</h2></div>
+            <div id="recentList" class="movement-table"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="movementsView" class="desktop-view hidden">
+        <section class="panel">
+          <div class="panel-head"><h2>Movimentações</h2><button id="movementAddInline">+ Novo movimento</button></div>
+          <div id="allMovements" class="movement-table"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="tokenDialog" class="modal">
+    <form id="tokenForm">
+      <h2>Conectar ao Orion</h2>
+      <p>Cole o token gerado pelo Apps Script. Ele ficará salvo apenas neste computador.</p>
+      <label>Token<input id="tokenInput" type="password" required></label>
+      <div class="modal-actions"><button type="button" data-close="tokenDialog" class="secondary">Cancelar</button><button>Salvar</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="accountDialog" class="modal">
+    <form id="accountForm">
+      <h2>Nova conta</h2>
+      <div class="form-grid">
+        <label>Instituição<select id="accountInstitution" required></select></label>
+        <label>Nome<input id="accountName" placeholder="Ex.: Conta principal" required></label>
+        <label>Tipo<select id="accountType">
+          <option value="corrente">Conta corrente</option>
+          <option value="pagamento">Conta de pagamento</option>
+          <option value="beneficio">Benefício</option>
+          <option value="poupanca">Poupança</option>
+          <option value="carteira">Carteira</option>
+        </select></label>
+        <label>Saldo inicial<input id="accountBalance" type="text" inputmode="decimal" placeholder="0,00"></label>
+      </div>
+      <div class="modal-actions"><button type="button" data-close="accountDialog" class="secondary">Cancelar</button><button>Salvar conta</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="movementDialog" class="modal">
+    <form id="movementForm">
+      <h2>Novo movimento</h2>
+      <div class="segmented">
+        <button type="button" class="segment active" data-type="saida">Saída</button>
+        <button type="button" class="segment" data-type="entrada">Entrada</button>
+      </div>
+      <div class="form-grid">
+        <label>Valor<input id="movementValue" type="text" inputmode="decimal" placeholder="0,00" required></label>
+        <label>Descrição<input id="movementDescription" required></label>
+        <label>Categoria<select id="movementCategory" required></select></label>
+        <label>Conta<select id="movementAccount" required></select></label>
+        <label>Pagamento<select id="movementPayment">
+          <option value="pix">Pix</option>
+          <option value="debito">Débito</option>
+          <option value="credito">Crédito</option>
+          <option value="dinheiro">Dinheiro</option>
+          <option value="boleto">Boleto</option>
+          <option value="outro">Outro</option>
+        </select></label>
+        <label>Data<input id="movementDate" type="date" required></label>
+        <label class="full">Observação<textarea id="movementNote" rows="2"></textarea></label>
+      </div>
+      <div class="modal-actions"><button type="button" data-close="movementDialog" class="secondary">Cancelar</button><button>Registrar</button></div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast hidden"></div>
+  <div id="reward" class="reward hidden"><span>✓</span><p id="rewardText"></p></div>
+
+  <script type="module" src="./desktop.js"></script>
+</body>
+</html>

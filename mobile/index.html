@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4f6f8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Orion">
+  <title>Orion Finance</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="../core/theme.css">
+  <link rel="stylesheet" href="./mobile.css">
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">ORION FINANCE</span>
+        <h1>Como está seu dinheiro?</h1>
+      </div>
+      <button id="settingsBtn" class="icon-btn" aria-label="Configurações">⚙</button>
+    </header>
+
+    <aside id="syncBanner" class="sync-banner hidden">
+      <span id="syncBannerText">Há dados mais recentes disponíveis.</span>
+      <button id="syncBannerBtn">Sincronizar</button>
+    </aside>
+
+    <main id="mainContent" class="content">
+      <section id="homeView" class="view">
+        <article class="hero-card">
+          <span>Saldo total</span>
+          <strong id="saldoTotal">R$ 0,00</strong>
+          <div class="hero-grid">
+            <div><small>Entradas</small><b id="entradasMes">R$ 0,00</b></div>
+            <div><small>Saídas</small><b id="saidasMes">R$ 0,00</b></div>
+          </div>
+        </article>
+
+        <section class="section-head">
+          <h2>Contas</h2>
+          <button id="addAccountBtn" class="text-btn">+ Conta</button>
+        </section>
+        <div id="accountsList" class="account-stack"></div>
+
+        <section class="section-head">
+          <h2>Últimas movimentações</h2>
+        </section>
+        <div id="recentList" class="movement-list"></div>
+      </section>
+
+      <section id="movementsView" class="view hidden">
+        <div class="section-head"><h2>Movimentações</h2></div>
+        <div id="allMovements" class="movement-list"></div>
+      </section>
+    </main>
+
+    <button id="quickAddBtn" class="fab" aria-label="Novo movimento">+</button>
+
+    <nav class="bottom-nav" aria-label="Navegação principal">
+      <button class="nav-btn active" data-view="homeView"><span>⌂</span><small>Início</small></button>
+      <button class="nav-btn" data-view="movementsView"><span>↕</span><small>Movimentos</small></button>
+      <button id="syncNavBtn" class="nav-btn"><span>↻</span><small>Sincronizar</small></button>
+    </nav>
+  </div>
+
+  <dialog id="tokenDialog" class="sheet-dialog">
+    <form id="tokenForm" method="dialog">
+      <div class="dialog-handle"></div>
+      <h2>Conectar ao Orion</h2>
+      <p>Cole a chave criada no Apps Script. Ela ficará salva apenas neste dispositivo.</p>
+      <label>Token
+        <input id="tokenInput" type="password" autocomplete="off" required>
+      </label>
+      <div class="dialog-actions">
+        <button value="cancel" class="secondary">Cancelar</button>
+        <button id="saveTokenBtn" value="default">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="accountDialog" class="sheet-dialog">
+    <form id="accountForm">
+      <div class="dialog-handle"></div>
+      <h2>Nova conta</h2>
+      <label>Instituição<select id="accountInstitution" required></select></label>
+      <label>Nome<input id="accountName" placeholder="Ex.: Conta principal" required></label>
+      <label>Tipo<select id="accountType">
+        <option value="corrente">Conta corrente</option>
+        <option value="pagamento">Conta de pagamento</option>
+        <option value="beneficio">Benefício</option>
+        <option value="poupanca">Poupança</option>
+        <option value="carteira">Carteira</option>
+      </select></label>
+      <label>Saldo inicial<input id="accountBalance" type="text" inputmode="decimal" placeholder="0,00"></label>
+      <div class="dialog-actions">
+        <button type="button" data-close="accountDialog" class="secondary">Cancelar</button>
+        <button type="submit">Salvar conta</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="movementDialog" class="sheet-dialog">
+    <form id="movementForm">
+      <div class="dialog-handle"></div>
+      <h2>Novo movimento</h2>
+      <div class="segmented">
+        <button type="button" class="segment active" data-type="saida">Saída</button>
+        <button type="button" class="segment" data-type="entrada">Entrada</button>
+      </div>
+      <label class="money-field">Valor<input id="movementValue" type="text" inputmode="decimal" placeholder="0,00" required></label>
+      <label>Descrição<input id="movementDescription" placeholder="Ex.: Mercado" required></label>
+      <label>Categoria<select id="movementCategory" required></select></label>
+      <label>Conta<select id="movementAccount" required></select></label>
+      <label>Pagamento<select id="movementPayment">
+        <option value="pix">Pix</option>
+        <option value="debito">Débito</option>
+        <option value="credito">Crédito</option>
+        <option value="dinheiro">Dinheiro</option>
+        <option value="boleto">Boleto</option>
+        <option value="outro">Outro</option>
+      </select></label>
+      <label>Data<input id="movementDate" type="date" required></label>
+      <label>Observação<textarea id="movementNote" rows="2"></textarea></label>
+      <div class="dialog-actions">
+        <button type="button" data-close="movementDialog" class="secondary">Cancelar</button>
+        <button type="submit">Registrar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast hidden"></div>
+  <div id="reward" class="reward hidden"><div class="reward-dot">✓</div><p id="rewardText"></p></div>
+
+  <script type="module" src="./mobile.js"></script>
+</body>
+</html>
