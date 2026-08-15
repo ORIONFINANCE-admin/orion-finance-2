@@ -1,0 +1,65 @@
+:root {
+  --orion-bg: #f4f6f8;
+  --orion-surface: #ffffff;
+  --orion-surface-soft: #f8fafc;
+  --orion-text: #111827;
+  --orion-muted: #6b7280;
+  --orion-line: #e5e7eb;
+  --orion-positive: #16a34a;
+  --orion-negative: #dc2626;
+  --orion-info: #2563eb;
+  --orion-insight: #7c3aed;
+  --orion-warning: #ea580c;
+  --orion-reward: #eab308;
+  --orion-radius-sm: 12px;
+  --orion-radius: 18px;
+  --orion-radius-lg: 26px;
+  --orion-shadow: 0 12px 30px rgba(17, 24, 39, .08);
+  --orion-fast: 160ms cubic-bezier(.2,.8,.2,1);
+  --orion-font: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--orion-font);
+  background: var(--orion-bg);
+  color: var(--orion-text);
+}
+button, input, select, textarea { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+.hidden { display: none !important; }
+.amount-positive { color: var(--orion-positive); }
+.amount-negative { color: var(--orion-negative); }
+
+:root[data-theme="dark"]{--orion-bg:#090d14;--orion-surface:#111827;--orion-surface-soft:#161e2d;--orion-text:#f8fafc;--orion-muted:#94a3b8;--orion-line:#263244;--orion-shadow:0 14px 34px rgba(0,0,0,.28)}
+:root[data-theme="dark"] body{color-scheme:dark}:root[data-theme="dark"] input,:root[data-theme="dark"] select,:root[data-theme="dark"] textarea,:root[data-theme="dark"] dialog{background:var(--orion-surface);color:var(--orion-text);border-color:var(--orion-line)}
+:root[data-theme="dark"] .panel,:root[data-theme="dark"] .movement,:root[data-theme="dark"] .debt-card,:root[data-theme="dark"] .radar-card,:root[data-theme="dark"] .investment-card,:root[data-theme="dark"] .learning-card,:root[data-theme="dark"] .unlock-message{background:var(--orion-surface);color:var(--orion-text);border-color:var(--orion-line)}
+:root[data-animations="off"] *,:root[data-animations="off"] *::before,:root[data-animations="off"] *::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+:root[data-hide-values="on"] [data-money]{filter:blur(8px);user-select:none}
+
+/* v0.5.1 — consistência de tema */
+:root[data-theme="dark"] .kpi,
+:root[data-theme="dark"] .summary-card,
+:root[data-theme="dark"] .dashboard-card {
+  background:var(--orion-surface) !important;
+  color:var(--orion-text) !important;
+  border-color:var(--orion-line) !important;
+}
+:root[data-theme="dark"] .kpi small,
+:root[data-theme="dark"] .summary-card small,
+:root[data-theme="dark"] .dashboard-card small {
+  color:var(--orion-muted) !important;
+}
+:root[data-theme="dark"] .kpi strong,
+:root[data-theme="dark"] .summary-card strong,
+:root[data-theme="dark"] .dashboard-card strong {
+  color:var(--orion-text) !important;
+}
+:root[data-theme="dark"] .sync-banner,
+:root[data-theme="dark"] .caju-banner {
+  background:color-mix(in srgb,var(--orion-info) 12%,var(--orion-surface)) !important;
+  color:var(--orion-text) !important;
+  border:1px solid color-mix(in srgb,var(--orion-info) 28%,var(--orion-line)) !important;
+}
