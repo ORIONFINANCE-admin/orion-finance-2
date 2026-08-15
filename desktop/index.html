@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>Orion Finance Desktop</title>
+  <link rel="stylesheet" href="../core/theme.css">
+  <link rel="stylesheet" href="./desktop.css">
+</head>
+<body>
+  <div class="desktop-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-dot"></span><b>ORION</b></div>
+      <nav>
+        <button class="side-btn active" data-view="dashboardView">⌂ <span>Visão geral</span></button>
+        <button class="side-btn" data-view="movementsView">↕ <span>Movimentações</span></button>
+        <button class="side-btn" data-view="debtsView">◫ <span>Dívidas</span></button>
+        <button class="side-btn" data-view="investmentsView">⌁ <span>Investimentos</span></button>
+        <button class="side-btn" data-view="evolutionView">✦ <span>Evolução</span></button>
+        <button id="syncBtn" class="side-btn">↻ <span>Sincronizar</span></button>
+      </nav>
+      <button id="settingsBtn" class="side-btn settings">⚙ <span>Configurações</span></button>
+    </aside>
+
+    <main class="workspace">
+      <header class="workspace-header">
+        <div><span class="eyebrow">ORION FINANCE</span><h1>Como está seu dinheiro?</h1></div>
+        <button id="quickAddBtn" class="primary-btn">+ Novo movimento</button>
+      </header>
+
+      <div id="syncBanner" class="sync-banner hidden">
+        <span>Há dados mais recentes na base central.</span>
+        <button id="syncBannerBtn">Sincronizar agora</button>
+      </div>
+
+      <div id="cajuBanner" class="sync-banner caju-banner hidden"><span>Caju: R$ 400 deste mês estão previstos para o benefício.</span><button id="cajuConfirmBtn">Registrar</button></div>
+
+      <section id="dashboardView" class="desktop-view">
+        <div class="kpi-grid">
+          <article class="kpi primary"><small>Saldo total</small><strong id="saldoTotal">R$ 0,00</strong></article>
+          <article class="kpi"><small>Entradas do mês</small><strong id="entradasMes">R$ 0,00</strong></article>
+          <article class="kpi"><small>Saídas do mês</small><strong id="saidasMes">R$ 0,00</strong></article>
+          <article class="kpi"><small>Resultado</small><strong id="resultadoMes">R$ 0,00</strong></article>
+        </div>
+
+        <div class="content-grid">
+          <section class="panel">
+            <div class="panel-head"><h2>Contas</h2><button id="addAccountBtn">+ Adicionar</button></div>
+            <div id="accountsGrid" class="accounts-grid"></div>
+          </section>
+
+          <section class="panel">
+            <div class="panel-head"><h2>Últimas movimentações</h2></div>
+            <div id="recentList" class="movement-table"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="movementsView" class="desktop-view hidden">
+        <section class="panel">
+          <div class="panel-head"><h2>Movimentações</h2><button id="movementAddInline">+ Novo movimento</button></div>
+          <div id="allMovements" class="movement-table"></div>
+        </section>
+      </section>
+      <section id="debtsView" class="desktop-view hidden">
+        <article class="kpi primary debt-total-card"><small>Total em aberto</small><strong id="debtsTotal">R$ 0,00</strong></article>
+        <section class="panel"><div class="panel-head"><h2>Dívidas</h2><button id="addDebtBtn">+ Nova dívida</button></div><div id="debtsList" class="debt-grid"></div></section>
+      </section>
+      <section id="investmentsView" class="desktop-view hidden">
+        <article class="reserve-card desktop-reserve">
+          <div class="reserve-head">
+            <div><small>ETAPA 1</small><h2>Reserva de emergência</h2></div>
+            <button id="editReserveBtn">Editar reserva</button>
+          </div>
+          <strong id="reserveAmount">R$ 0,00 / R$ 0,00</strong>
+          <div class="reserve-progress"><span id="reserveBar"></span></div>
+          <div class="reserve-meta"><span id="reservePercent">0%</span><span id="reserveStatus">Comece pela base</span></div>
+        </article>
+
+        <div id="unlockMessage" class="unlock-message"></div>
+
+        <section id="learningInvestments" class="hidden">
+          <div class="learning-grid desktop-learning">
+            <article class="learning-card"><span class="learning-icon">🏢</span><strong>FIIs</strong><p>Familiarização com renda imobiliária, vacância, rendimentos e riscos.</p></article>
+            <article class="learning-card"><span class="learning-icon">📈</span><strong>Ações</strong><p>Fundamentos, valuation e qualidade do negócio, sem transformar indicador em ordem de compra.</p></article>
+          </div>
+
+          <section class="panel investment-panel">
+            <div class="panel-head"><h2>Analisar ativo</h2></div>
+            <div class="investment-search"><input id="tickerInput" placeholder="Ticker, ex.: PETR4"><button id="tickerSearchBtn">Analisar</button></div>
+            <p class="disclaimer">Indicadores quantitativos para apoio à análise. Não constituem recomendação.</p>
+            <div id="investmentResult"></div>
+          </section>
+
+          <section class="panel radar-panel">
+            <div class="panel-head"><h2>Radar</h2></div>
+            <div id="radarList" class="radar-grid"></div>
+          </section>
+        </section>
+      </section>
+
+      <section id="evolutionView" class="desktop-view hidden evolution-view">
+        <div class="game-sky"><div class="game-orbit orbit-a"></div><div class="game-orbit orbit-b"></div><div class="game-profile"><span class="game-kicker">EVOLUÇÃO ORION</span><div class="level-emblem" id="levelEmblem">1</div><h2 id="levelTitle">Nível 1 · Observador</h2><p id="levelXP">0 XP</p><div class="xp-track"><span id="xpBar"></span></div><small id="xpNext">100 XP para o próximo nível</small></div></div>
+        <div class="game-section"><div class="section-head"><h2>Emblemas</h2></div><div id="achievementGrid" class="achievement-grid"></div></div>
+        <div class="game-section"><div class="section-head"><h2>Medalhas evolutivas</h2></div><div id="medalGrid" class="medal-grid"></div></div>
+        <div class="game-section"><div class="section-head"><h2>Último XP</h2></div><div id="xpHistory" class="xp-history"></div></div>
+      </section>
+    </main>
+  </div>
+
+
+  <dialog id="settingsDialog" class="modal settings-dialog"><h2>Configurações</h2>
+    <button class="settings-row" data-settings="appearance"><span>◐</span><div><strong>Aparência</strong><small>Tema e animações</small></div><b>›</b></button>
+    <button class="settings-row" data-settings="api"><span>⌁</span><div><strong>API</strong><small>Conexão com a base central</small></div><b>›</b></button>
+    <button class="settings-row" data-settings="preferences"><span>⚙</span><div><strong>Preferências</strong><small>Privacidade visual</small></div><b>›</b></button>
+    <button class="settings-row" data-settings="data"><span>↻</span><div><strong>Dados</strong><small>Sincronização</small></div><b>›</b></button>
+    <button class="settings-row" data-settings="about"><span>ⓘ</span><div><strong>Sobre</strong><small>Orion Finance v0.4</small></div><b>›</b></button><div class="dialog-actions"><button type="button" data-close="settingsDialog" class="secondary">Fechar</button></div>
+  </dialog>
+  <dialog id="appearanceDialog" class="modal"><h2>Aparência</h2><label>Tema<select id="themeSelect"><option value="system">Automático</option><option value="light">Claro</option><option value="dark">Escuro</option></select></label><label class="toggle-line"><span>Animações</span><input id="animationsToggle" type="checkbox"></label><div class="dialog-actions"><button type="button" data-close="appearanceDialog">Concluir</button></div></dialog>
+  <dialog id="preferencesDialog" class="modal"><h2>Preferências</h2><label class="toggle-line"><span>Ocultar valores</span><input id="hideValuesToggle" type="checkbox"></label><div class="dialog-actions"><button type="button" data-close="preferencesDialog">Concluir</button></div></dialog>
+  <dialog id="dataDialog" class="modal"><h2>Dados</h2><p id="dataStatus">Base local ativa.</p><button id="syncSettingsBtn" class="full-action">Sincronizar agora</button>
+<button id="resetOrionBtn" class="danger-action">Zerar Orion</button>
+<small class="danger-note">Apaga contas, lançamentos, dívidas, metas, radar, XP e transferências localmente e na planilha. Estrutura, categorias, instituições, frases, token e preferências são preservados.</small><div class="dialog-actions"><button type="button" data-close="dataDialog" class="secondary">Fechar</button></div></dialog>
+  <dialog id="aboutDialog" class="modal"><h2>Orion Finance</h2><p>Versão 0.4 · Estrutura 1.4.0</p><p>Registrar → visualizar → compreender → decidir.</p><div class="dialog-actions"><button type="button" data-close="aboutDialog">Fechar</button></div></dialog>
+
+  <dialog id="transferDialog" class="modal"><form id="transferForm"><h2>Transferir saldo</h2><label>De<select id="transferFrom" required></select></label><label>Para<select id="transferTo" required></select></label><label>Valor<input id="transferValue" type="text" inputmode="decimal" required></label><label>Data<input id="transferDate" type="date" required></label><label>Observação<textarea id="transferNote" rows="2"></textarea></label><div class="dialog-actions"><button type="button" data-close="transferDialog" class="secondary">Cancelar</button><button>Transferir</button></div></form></dialog>
+  <dialog id="tokenDialog" class="modal">
+    <form id="tokenForm">
+      <h2>Conectar ao Orion</h2>
+      <p>Cole o token gerado pelo Apps Script. Ele ficará salvo apenas neste computador.</p>
+      <label>Token<input id="tokenInput" type="password" required></label>
+      <div class="modal-actions"><button type="button" data-close="tokenDialog" class="secondary">Cancelar</button><button>Salvar</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="accountDialog" class="modal">
+    <form id="accountForm">
+      <h2>Nova conta</h2>
+      <div class="form-grid">
+        <label>Instituição<select id="accountInstitution" required></select></label>
+        <label>Nome<input id="accountName" placeholder="Ex.: Conta principal" required></label>
+        <label>Tipo<select id="accountType">
+          <option value="corrente">Conta corrente</option>
+          <option value="pagamento">Conta de pagamento</option>
+          <option value="beneficio">Benefício</option>
+          <option value="poupanca">Poupança</option>
+          <option value="carteira">Carteira</option>
+        </select></label>
+        <label>Saldo inicial<input id="accountBalance" type="text" inputmode="decimal" placeholder="0,00"></label>
+      </div>
+      <div class="modal-actions"><button type="button" data-close="accountDialog" class="secondary">Cancelar</button><button>Salvar conta</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="movementDialog" class="modal">
+    <form id="movementForm">
+      <h2>Novo movimento</h2>
+      <div class="segmented">
+        <button type="button" class="segment active" data-type="saida">Saída</button>
+        <button type="button" class="segment" data-type="entrada">Entrada</button>
+      </div>
+      <div class="form-grid">
+        <label>Valor<input id="movementValue" type="text" inputmode="decimal" placeholder="0,00" required></label>
+        <label>Descrição<input id="movementDescription" required></label><div id="smartSuggestion" class="smart-suggestion full hidden"></div>
+        <label>Categoria<select id="movementCategory" required></select></label>
+        <label>Conta<select id="movementAccount" required></select></label>
+        <label>Pagamento<select id="movementPayment">
+          <option value="pix">Pix</option>
+          <option value="debito">Débito</option>
+          <option value="credito">Crédito</option>
+          <option value="dinheiro">Dinheiro</option>
+          <option value="boleto">Boleto</option>
+          <option value="outro">Outro</option>
+        </select></label>
+        <label>Data<input id="movementDate" type="date" required></label>
+        <label class="full">Observação<textarea id="movementNote" rows="2"></textarea></label>
+      </div>
+      <div class="modal-actions"><button type="button" data-close="movementDialog" class="secondary">Cancelar</button><button>Registrar</button></div>
+    </form>
+  </dialog>
+
+
+  <dialog id="debtDialog" class="modal"><form id="debtForm">
+    <h2>Nova dívida</h2>
+    <label>Descrição<input id="debtDescription" required></label><label>Credor<input id="debtCreditor" required></label>
+    <label>Tipo<select id="debtType"><option value="informal">Informal</option><option value="formal">Formal</option></select></label>
+    <label>Valor original<input id="debtOriginal" type="text" inputmode="decimal" required></label>
+    <label>Pagamento<select id="debtPaymentMode"><option value="livre">Livre / sem data fixa</option><option value="parcelada">Parcelada</option></select></label>
+    <label>Valor planejado<input id="debtPlanned" type="text" inputmode="decimal" placeholder="Opcional"></label>
+    <label>Vencimento<input id="debtDue" type="date"></label><label>Observação<textarea id="debtNote" rows="2"></textarea></label>
+    <div class="dialog-actions"><button type="button" data-close="debtDialog" class="secondary">Cancelar</button><button>Salvar</button></div>
+  </form></dialog>
+  <dialog id="debtPaymentDialog" class="modal"><form id="debtPaymentForm">
+    <h2>Registrar pagamento</h2><input id="paymentDebtId" type="hidden">
+    <label>Valor<input id="paymentValue" type="text" inputmode="decimal" required></label><label>Conta<select id="paymentAccount" required></select></label>
+    <label>Forma<select id="paymentMethod"><option value="pix">Pix</option><option value="debito">Débito</option><option value="dinheiro">Dinheiro</option><option value="boleto">Boleto</option></select></label>
+    <label>Data<input id="paymentDate" type="date" required></label><label>Observação<textarea id="paymentNote" rows="2"></textarea></label>
+    <div class="dialog-actions"><button type="button" data-close="debtPaymentDialog" class="secondary">Cancelar</button><button>Registrar</button></div>
+  </form></dialog>
+
+
+  <dialog id="reserveDialog" class="modal">
+    <form id="reserveForm">
+      <h2>Reserva de emergência</h2>
+      <p>Defina a meta e quanto já está reservado.</p>
+      <div class="form-grid">
+        <label>Valor-alvo<input id="reserveTarget" type="text" inputmode="decimal" required></label>
+        <label>Valor atual<input id="reserveCurrent" type="text" inputmode="decimal" required></label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" data-close="reserveDialog" class="secondary">Cancelar</button>
+        <button>Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <dialog id="resetDialog" class="modal">
+    <h2>Zerar Orion</h2>
+    <p>Esta ação apaga seus dados financeiros e todo o progresso sincronizado. A estrutura do aplicativo continuará intacta.</p>
+    <p><strong>Para confirmar, digite ZERAR.</strong></p>
+    <input id="resetConfirmInput" autocomplete="off" placeholder="ZERAR">
+    <div class="dialog-actions">
+      <button type="button" data-close="resetDialog" class="secondary">Cancelar</button>
+      <button id="confirmResetBtn" type="button" class="danger-action">Apagar tudo</button>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast hidden"></div>
+  <div id="reward" class="reward hidden"><span>✓</span><p id="rewardText"></p></div>
+
+  <script type="module" src="./desktop.js"></script>
+</body>
+</html>
