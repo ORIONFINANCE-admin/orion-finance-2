@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#081326">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <title>Orion Finance Desktop</title>
+  <link rel="stylesheet" href="../core/theme.css">
+  <link rel="stylesheet" href="./desktop.css?v=091">
+</head>
+<body>
+  <div class="desktop-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-dot"></span><b>ORION</b></div>
+      <nav>
+        <button class="side-btn active" data-view="dashboardView"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.8 10.9 12 4l8.2 6.9v8.3a1.8 1.8 0 0 1-1.8 1.8H5.6a1.8 1.8 0 0 1-1.8-1.8z"/><path d="M9.2 21v-6.5h5.6V21"/></svg></span><span>Visão geral</span></button>
+        <button class="side-btn" data-view="movementsView"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4v15"/><path d="m4.5 7.5 3.5-3.5 3.5 3.5"/><path d="M16 20V5"/><path d="m12.5 16.5 3.5 3.5 3.5-3.5"/></svg></span><span>Movimentações</span></button>
+        <button class="side-btn" data-view="recurringView"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span><span>Recorrentes</span></button>
+        <button class="side-btn" data-view="debtsView"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2.5"/><path d="M8 9h8M8 13h5"/></svg></span><span>Dívidas</span></button>
+        <button class="side-btn" data-view="investmentsView"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 17 9 12l3 3 7-8"/><path d="M14 7h5v5"/></svg></span><span>Investimentos</span></button>
+        <button class="side-btn" data-view="evolutionView"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.8 4.5L18 9.2l-4.2 1.7L12 15.5l-1.8-4.6L6 9.2l4.2-1.7z"/><path d="m18.5 15 .9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1-2.1-.9 2.1-.9z"/></svg></span><span>Evolução</span></button>
+        <button id="syncBtn" class="side-btn"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5"/><path d="M4 17v-5h5"/><path d="M18.2 9A7 7 0 0 0 6.1 6.5L4 9M5.8 15A7 7 0 0 0 17.9 17.5L20 15"/></svg></span><span>Sincronizar</span></button>
+      </nav>
+      <button id="settingsBtn" class="side-btn settings"><span class="side-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19 13.5v-3l-2-.7-.7-1.7.9-1.9-2.1-2.1-1.9.9-1.7-.7-.7-2h-3l-.7 2-1.7.7-1.9-.9-2.1 2.1.9 1.9-.7 1.7-2 .7v3l2 .7.7 1.7-.9 1.9 2.1 2.1 1.9-.9 1.7.7.7 2h3l.7-2 1.7-.7 1.9.9 2.1-2.1-.9-1.9.7-1.7z"/></svg></span><span>Configurações</span></button>
+          <footer class="produced-signature desktop-signature" aria-label="Crédito do projeto">Produzido por João</footer>
+    </aside>
+
+    <main class="workspace">
+      <header class="workspace-header">
+        <div><span class="eyebrow">ORION FINANCE</span><h1>Como está seu dinheiro?</h1></div>
+        <div class="header-actions"><span id="lastSyncHome" class="sync-meta">Dados locais</span><button id="quickAddBtn" class="primary-btn">+ Novo movimento</button></div>
+      </header>
+
+      <div id="syncBanner" class="sync-banner hidden">
+        <span>Há dados mais recentes na base central.</span>
+        <button id="syncBannerBtn">Sincronizar agora</button>
+      </div>
+
+      <div id="cajuBanner" class="sync-banner caju-banner hidden"><span>Caju: confirmação mensal pendente.</span><button id="cajuConfirmBtn">Registrar</button></div>
+
+      <section id="dashboardView" class="desktop-view dashboard-premium">
+        <div class="insight-grid">
+          <article class="health-card-desktop panel premium-panel">
+            <div class="health-copy-desktop">
+              <span class="eyebrow">Saúde Financeira</span>
+              <h2 id="financialHealthLabel">Em análise</h2>
+              <div class="health-percent-line"><strong id="financialHealthPercent">0%</strong><span id="financialHealthHint">Assim que houver movimentações, o Orion fará a leitura do mês.</span></div>
+              <div class="health-bar desktop-health-bar"><span id="financialHealthBar"></span></div>
+            </div>
+            <div id="financialHealthRing" class="health-ring desktop-health-ring" style="--health-angle:0deg"><div class="health-ring-inner"><span id="financialHealthPulse">✦</span></div></div>
+          </article>
+          <article class="radar-home-desktop panel premium-panel">
+            <div class="radar-home-icon">◎</div>
+            <div>
+              <span class="eyebrow">Radar Orion</span>
+              <h2 id="radarInsightTitle">Observando o seu padrão</h2>
+              <p id="radarInsightText">O Orion destacará concentrações de gastos, ritmo do mês e oportunidades de ajuste.</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="kpi-grid premium-kpi-grid">
+          <article class="kpi primary"><small>Saldo total</small><strong id="saldoTotal">R$ 0,00</strong></article>
+          <article class="kpi"><small>Entradas do mês</small><strong id="entradasMes">R$ 0,00</strong></article>
+          <article class="kpi"><small>Saídas do mês</small><strong id="saidasMes">R$ 0,00</strong></article>
+          <article class="kpi"><small>Resultado</small><strong id="resultadoMes">R$ 0,00</strong></article>
+        </div>
+
+        <section class="panel commitments-panel premium-panel">
+          <div class="panel-head"><div><span class="eyebrow">MÊS ATUAL</span><h2>Compromissos</h2></div><strong id="commitmentsTotal" class="commitments-total">R$ 0,00</strong></div>
+          <div id="commitmentsSummary" class="commitments-summary"></div>
+        </section>
+        <div class="content-grid">
+          <section class="panel premium-panel">
+            <div class="panel-head"><h2>Contas</h2><button id="addAccountBtn">+ Adicionar</button></div>
+            <div id="accountsGrid" class="accounts-grid"></div>
+          </section>
+
+          <section class="panel premium-panel">
+            <div class="panel-head"><h2>Últimas movimentações</h2></div>
+            <div id="recentList" class="movement-table"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="movementsView" class="desktop-view hidden">
+        <section class="panel">
+          <div class="panel-head"><h2>Movimentações</h2><button id="movementAddInline">+ Novo movimento</button></div>
+          <div id="allMovements" class="movement-table"></div>
+        </section>
+      </section>
+      <section id="recurringView" class="desktop-view hidden">
+        <details class="recurring-accordion desktop-accordion">
+          <summary class="recurring-summary desktop-summary">
+            <div>
+              <small class="eyebrow">PLANEJAMENTO</small>
+              <h2>Despesas recorrentes</h2>
+              <p id="recurringToggleHint" class="recurring-summary-hint">Abra para visualizar as despesas recorrentes ativas.</p>
+            </div>
+            <div class="recurring-summary-meta">
+              <strong id="recurringToggleCount">0 ativas</strong>
+              <span class="accordion-chevron">⌄</span>
+            </div>
+          </summary>
+          <section class="panel">
+          <div class="panel-head"><div><span class="eyebrow">PLANEJAMENTO</span><h2>Despesas recorrentes</h2></div><button id="addRecurringBtn">+ Nova recorrente</button></div>
+          <p class="section-note">Previsões editáveis para aluguel, pensão, internet, telefone, cabeleireiro e outros compromissos. O valor previsto pode mudar sem alterar o histórico.</p>
+          <div id="recurringList" class="recurring-grid"></div>
+        </section>
+        </details>
+      </section>
+      <section id="debtsView" class="desktop-view hidden">
+        <article class="kpi primary debt-total-card"><small>Total em aberto</small><strong id="debtsTotal">R$ 0,00</strong></article>
+        <section class="panel"><div class="panel-head"><h2>Dívidas</h2><button id="addDebtBtn">+ Nova dívida</button></div><div id="debtsList" class="debt-grid"></div></section>
+      </section>
+      <section id="investmentsView" class="desktop-view hidden">
+        <article class="reserve-card desktop-reserve">
+          <div class="reserve-head">
+            <div><small>ETAPA 1</small><h2>Reserva de emergência</h2></div>
+            <button id="editReserveBtn">Editar reserva</button>
+          </div>
+          <strong id="reserveAmount">R$ 0,00 / R$ 0,00</strong>
+          <div class="reserve-progress"><span id="reserveBar"></span></div>
+          <div class="reserve-meta"><span id="reservePercent">0%</span><span id="reserveStatus">Comece pela base</span></div>
+        </article>
+
+        <div id="unlockMessage" class="unlock-message"></div>
+
+        <section id="learningInvestments" class="hidden">
+          <div class="learning-grid desktop-learning">
+            <article class="learning-card"><span class="learning-icon">🏢</span><strong>FIIs</strong><p>Familiarização com renda imobiliária, vacância, rendimentos e riscos.</p></article>
+            <article class="learning-card"><span class="learning-icon">📈</span><strong>Ações</strong><p>Fundamentos, valuation e qualidade do negócio, sem transformar indicador em ordem de compra.</p></article>
+          </div>
+
+          <section class="panel investment-panel">
+            <div class="panel-head"><h2>Analisar ativo</h2></div>
+            <div class="investment-search"><input id="tickerInput" placeholder="Ticker, ex.: PETR4"><button id="tickerSearchBtn">Analisar</button></div>
+            <p class="disclaimer">Indicadores quantitativos para apoio à análise. Não constituem recomendação.</p>
+            <div id="investmentResult"></div>
+          </section>
+
+          <section class="panel radar-panel">
+            <div class="panel-head"><h2>Radar</h2></div>
+            <div id="radarList" class="radar-grid"></div>
+          </section>
+        </section>
+      </section>
+
+      <section id="evolutionView" class="desktop-view hidden evolution-view">
+        <div class="game-sky"><div class="game-orbit orbit-a"></div><div class="game-orbit orbit-b"></div><div class="game-profile"><span class="game-kicker">EVOLUÇÃO ORION</span><div class="level-emblem" id="levelEmblem">1</div><h2 id="levelTitle">Nível 1 · Observador</h2><p id="levelXP">0 XP</p><div class="xp-track"><span id="xpBar"></span></div><small id="xpNext">100 XP para o próximo nível</small></div></div>
+        <div class="game-section"><div class="section-head"><h2>Emblemas</h2></div><div id="achievementGrid" class="achievement-grid"></div></div>
+        <div class="game-section"><div class="section-head"><h2>Medalhas evolutivas</h2></div><div id="medalGrid" class="medal-grid"></div></div>
+        <div class="game-section"><div class="section-head"><h2>Último XP</h2></div><div id="xpHistory" class="xp-history"></div></div>
+      </section>
+    </main>
+  </div>
+
+
+  <dialog id="settingsDialog" class="modal settings-dialog"><h2>Configurações</h2>
+    <button class="settings-row" data-settings="appearance"><span>◐</span><div><strong>Aparência</strong><small>Tema e animações</small></div><b>›</b></button>
+    <button class="settings-row" data-settings="api"><span>⌁</span><div><strong>API</strong><small>Conexão com a base central</small></div><b>›</b></button>
+    <button class="settings-row" data-settings="preferences"><span>⚙</span><div><strong>Preferências</strong><small>Privacidade visual</small></div><b>›</b></button>
+    <button class="settings-row" data-settings="data"><span>↻</span><div><strong>Dados</strong><small>Sincronização</small></div><b>›</b></button>
+    <button class="settings-row" data-settings="about"><span>ⓘ</span><div><strong>Sobre</strong><small>Orion Finance v0.9.1</small></div><b>›</b></button><div class="dialog-actions"><button type="button" data-close="settingsDialog" class="secondary">Fechar</button></div>
+  </dialog>
+  <dialog id="accountVisibilityDialog" class="modal"><h2>Visibilidade no dashboard</h2><p>Automático oculta saldo zero. “Sempre mostrar” fixa a instituição; “Ocultar” remove apenas da visão geral.</p><div id="accountVisibilityList" class="visibility-list"></div><div class="dialog-actions"><button type="button" data-close="accountVisibilityDialog">Concluir</button></div></dialog>
+  <dialog id="appearanceDialog" class="modal"><h2>Aparência</h2><label>Tema<select id="themeSelect"><option value="system">Automático</option><option value="light">Claro</option><option value="dark">Escuro</option></select></label><label class="toggle-line"><span>Animações</span><input id="animationsToggle" type="checkbox"></label><div class="dialog-actions"><button type="button" data-close="appearanceDialog">Concluir</button></div></dialog>
+  <dialog id="preferencesDialog" class="modal"><h2>Preferências</h2><label class="toggle-line"><span>Ocultar valores</span><input id="hideValuesToggle" type="checkbox"></label><button id="accountVisibilityBtn" class="full-action secondary-action">Visibilidade no dashboard</button><div class="dialog-actions"><button type="button" data-close="preferencesDialog">Concluir</button></div></dialog>
+  <dialog id="dataDialog" class="modal"><h2>Dados</h2><p id="dataStatus">Base local ativa.</p><button id="syncSettingsBtn" class="full-action">Sincronizar agora</button>
+<button id="exportSheetBtn" class="full-action secondary-action">Exportar planilha (.xlsx)</button>
+<button id="diagnosticsBtn" class="full-action secondary-action">Diagnóstico Orion</button>
+<div id="diagnosticsBox" class="diagnostics-box hidden"></div>
+<button id="resetOrionBtn" class="danger-action">Zerar Orion</button>
+<small class="danger-note">Apaga contas, lançamentos, dívidas, metas, radar, XP e transferências localmente e na planilha. Estrutura, categorias, instituições, frases, token e preferências são preservados.</small><div class="dialog-actions"><button type="button" data-close="dataDialog" class="secondary">Fechar</button></div></dialog>
+  <dialog id="aboutDialog" class="modal"><h2>Orion Finance</h2><p>Versão 0.9.1 · Estrutura 1.7.0</p><p>Registrar → visualizar → compreender → decidir.</p><p>Saúde financeira, Radar Orion e home premium integrados.</p><div class="dialog-actions"><button type="button" data-close="aboutDialog">Fechar</button></div></dialog>
+
+
+  <dialog id="recurringDialog" class="modal">
+    <form id="recurringForm">
+      
+      <h2 id="recurringDialogTitle">Nova despesa recorrente</h2>
+      <input id="recurringId" type="hidden">
+      <label>Nome<input id="recurringName" placeholder="Ex.: Aluguel" required></label>
+      <label>Valor previsto<input id="recurringValue" type="text" inputmode="decimal" placeholder="0,00" required></label>
+      <label>Categoria<select id="recurringCategory" required></select></label>
+      <label>Frequência<select id="recurringFrequency">
+        <option value="mensal">Mensal</option><option value="quinzenal">A cada 15 dias</option>
+        <option value="semanal">Semanal</option><option value="anual">Anual</option>
+        <option value="personalizado">Personalizado</option>
+      </select></label>
+      <label>Dia de referência/vencimento<input id="recurringDueDay" type="number" min="1" max="31" placeholder="Ex.: 10"></label>
+      <label>Conta usual<select id="recurringAccount"></select></label>
+      <label>Pagamento<select id="recurringPayment">
+        <option value="pix">Pix</option><option value="debito">Débito</option><option value="credito">Crédito</option>
+        <option value="dinheiro">Dinheiro</option><option value="boleto">Boleto</option>
+      </select></label>
+      <label>Observação<textarea id="recurringNote" rows="2"></textarea></label>
+      <div class="dialog-actions"><button type="button" data-close="recurringDialog" class="secondary">Cancelar</button><button type="submit">Salvar</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="transferDialog" class="modal"><form id="transferForm"><h2>Transferir saldo</h2><label>De<select id="transferFrom" required></select></label><label>Para<select id="transferTo" required></select></label><label>Valor<input id="transferValue" type="text" inputmode="decimal" required></label><label>Data<input id="transferDate" type="date" required></label><label>Observação<textarea id="transferNote" rows="2"></textarea></label><div class="dialog-actions"><button type="button" data-close="transferDialog" class="secondary">Cancelar</button><button>Transferir</button></div></form></dialog>
+  <dialog id="tokenDialog" class="modal">
+    <form id="tokenForm">
+      <h2>Conectar ao Orion</h2>
+      <p>Cole o token gerado pelo Apps Script. Ele ficará salvo apenas neste computador.</p>
+      <label>Token<input id="tokenInput" type="password" required></label>
+      <div class="modal-actions"><button type="button" data-close="tokenDialog" class="secondary">Cancelar</button><button>Salvar</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="accountDialog" class="modal">
+    <form id="accountForm">
+      <h2>Nova conta</h2>
+      <div class="form-grid">
+        <label>Instituição<select id="accountInstitution" required></select></label>
+        <label>Nome<input id="accountName" placeholder="Ex.: Conta principal" required></label>
+        <label>Tipo<select id="accountType">
+          <option value="corrente">Conta corrente</option>
+          <option value="pagamento">Conta de pagamento</option>
+          <option value="beneficio">Benefício</option>
+          <option value="poupanca">Poupança</option>
+          <option value="carteira">Carteira</option>
+        </select></label>
+        <label>Saldo inicial<input id="accountBalance" type="text" inputmode="decimal" placeholder="0,00"></label>
+      </div>
+      <div class="modal-actions"><button type="button" data-close="accountDialog" class="secondary">Cancelar</button><button>Salvar conta</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="movementDialog" class="modal">
+    <form id="movementForm">
+      <h2>Novo movimento</h2>
+      <div class="segmented">
+        <button type="button" class="segment active" data-type="saida">Saída</button>
+        <button type="button" class="segment" data-type="entrada">Entrada</button>
+      </div>
+      <div class="form-grid">
+        <label>Valor<input id="movementValue" type="text" inputmode="decimal" placeholder="0,00" required></label>
+        <label>Descrição<input id="movementDescription" required></label>
+        <label>Categoria<select id="movementCategory" required></select></label>
+        <label>Conta<select id="movementAccount" required></select></label>
+        <label>Pagamento<select id="movementPayment">
+          <option value="pix">Pix</option>
+          <option value="debito">Débito</option>
+          <option value="credito">Crédito</option>
+          <option value="dinheiro">Dinheiro</option>
+          <option value="boleto">Boleto</option>
+          <option value="outro">Outro</option>
+        </select></label>
+        <label>Data<input id="movementDate" type="date" required></label>
+        <label class="full">Observação<textarea id="movementNote" rows="2"></textarea></label>
+      </div>
+      <div class="modal-actions"><button type="button" data-close="movementDialog" class="secondary">Cancelar</button><button>Registrar</button></div>
+    </form>
+  </dialog>
+
+
+  <dialog id="debtDialog" class="modal"><form id="debtForm">
+    <h2>Nova dívida</h2>
+    <label>Descrição<input id="debtDescription" required></label><label>Credor<input id="debtCreditor" required></label>
+    <label>Tipo<select id="debtType"><option value="informal">Informal</option><option value="formal">Formal</option></select></label>
+    <label>Valor original<input id="debtOriginal" type="text" inputmode="decimal" required></label>
+    <label>Pagamento<select id="debtPaymentMode"><option value="livre">Livre / sem data fixa</option><option value="parcelada">Parcelada</option></select></label>
+    <label>Valor planejado<input id="debtPlanned" type="text" inputmode="decimal" placeholder="Opcional"></label>
+    <label>Vencimento<input id="debtDue" type="date"></label><label>Observação<textarea id="debtNote" rows="2"></textarea></label>
+    <div class="dialog-actions"><button type="button" data-close="debtDialog" class="secondary">Cancelar</button><button>Salvar</button></div>
+  </form></dialog>
+  <dialog id="debtPaymentDialog" class="modal"><form id="debtPaymentForm">
+    <h2>Registrar pagamento</h2><input id="paymentDebtId" type="hidden">
+    <label>Valor<input id="paymentValue" type="text" inputmode="decimal" required></label><label>Conta<select id="paymentAccount" required></select></label>
+    <label>Forma<select id="paymentMethod"><option value="pix">Pix</option><option value="debito">Débito</option><option value="dinheiro">Dinheiro</option><option value="boleto">Boleto</option></select></label>
+    <label>Data<input id="paymentDate" type="date" required></label><label>Observação<textarea id="paymentNote" rows="2"></textarea></label>
+    <div class="dialog-actions"><button type="button" data-close="debtPaymentDialog" class="secondary">Cancelar</button><button>Registrar</button></div>
+  </form></dialog>
+
+
+  <dialog id="reserveDialog" class="modal">
+    <form id="reserveForm">
+      <h2>Reserva de emergência</h2>
+      <p>Defina a meta e quanto já está reservado.</p>
+      <div class="form-grid">
+        <label>Valor-alvo<input id="reserveTarget" type="text" inputmode="decimal" required></label>
+        <label>Valor atual<input id="reserveCurrent" type="text" inputmode="decimal" required></label>
+      </div>
+      <div class="modal-actions">
+        <button type="button" data-close="reserveDialog" class="secondary">Cancelar</button>
+        <button>Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <dialog id="resetDialog" class="modal">
+    <h2>Zerar Orion</h2>
+    <p>Esta ação apaga seus dados financeiros e todo o progresso sincronizado. A estrutura do aplicativo continuará intacta.</p>
+    <p><strong>Deseja realmente apagar todos os dados financeiros e o progresso?</strong></p>
+    <p id="resetStatus" class="reset-status hidden" aria-live="polite"></p>
+    <div class="dialog-actions">
+      <button type="button" data-close="resetDialog" class="secondary">Cancelar</button>
+      <button id="confirmResetBtn" type="button" class="danger-action">Sim, apagar tudo</button>
+    </div>
+  </dialog>
+
+
+  <dialog id="exportDialog" class="modal">
+    <h2>Exportar planilha</h2>
+    <p>Será baixada uma cópia atual da base Orion em Excel (.xlsx).</p>
+    <p>Isso não altera nem apaga nenhum dado.</p>
+    <div class="dialog-actions">
+      <button type="button" data-close="exportDialog" class="secondary">Cancelar</button>
+      <button id="confirmExportBtn" type="button">Confirmar exportação</button>
+    </div>
+  </dialog>
+
+
+  <dialog id="syncLoadingDialog" class="modal sync-loading-dialog">
+    
+    <div class="sync-loading-content">
+      <div class="sync-spinner" aria-hidden="true"></div>
+      <h2>Sincronizando</h2>
+      <p id="syncLoadingText">Atualizando sua base com segurança…</p>
+      <div class="sync-loading-track"><span></span></div>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast hidden"></div>
+  <div id="reward" class="reward hidden"><span>✓</span><p id="rewardText"></p></div>
+
+  <script type="module" src="./desktop.js?v=091"></script>
+</body>
+</html>
