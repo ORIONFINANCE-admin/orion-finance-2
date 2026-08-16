@@ -1,16 +1,16 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                                                             │
-│                              ✦			      │
+│                              ✦			                  │
 │                                                             │
 │                        O  R  I  O  N                        │
 │                        F I N A N C E                        │
 │                                                             │
 │                       ╭────────────╮                        │
-│                  ●────╯     ◉      ╰────✦		      │
+│                  ●────╯     ◉      ╰────✦		          │
 │                       ╰────────────╯                        │
 │                                                             │
 │               CLAREZA PARA ENTENDER O DINHEIRO.             │
-│                   ESTRUTURA PARA DECIDIR.	    	      │
+│                   ESTRUTURA PARA DECIDIR.	    	          │
 │                                                             │
 │                                                             │
 │                    Produzido por João                       │
