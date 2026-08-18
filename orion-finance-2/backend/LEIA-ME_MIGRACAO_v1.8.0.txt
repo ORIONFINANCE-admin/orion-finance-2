@@ -1,0 +1,30 @@
+ORION FINANCE 2.0 — MIGRAÇÃO SEGURA v0.11.1 / ESTRUTURA 1.8.0
+
+OBJETIVO
+Atualizar a base sem apagar o histórico existente.
+
+PROTEÇÕES DA v0.11.1
+1. Pré-validação dos cabeçalhos antes de qualquer alteração.
+2. Backup completo automático em uma nova planilha do Google Drive.
+3. DIVIDAS, CONTAS e TRANSACOES são migradas apenas por INSERÇÃO DE COLUNAS.
+4. Nenhum sheet.clear() é usado na migração estrutural.
+5. IDs duplicados são detectados.
+6. Quantidade de registros, conjunto de IDs e somas financeiras críticas são comparados antes/depois.
+7. META só recebe estrutura 1.8.0 depois de todas as validações passarem.
+8. Rodar a migração novamente é seguro: se já estiver atualizada, nenhuma alteração é feita.
+
+ORDEM RECOMENDADA
+1. Substitua integralmente o Code.gs pelo arquivo Orion_Finance_2.0_AppsScript_v0.11.1.txt.
+2. Salve.
+3. Execute atualizarEstruturaOrionV18().
+4. No Registro de execução, confirme a mensagem de sucesso e copie a URL do backup.
+5. Opcionalmente execute mostrarUltimoBackupOrion() para exibir novamente a URL.
+6. Reimplante o Web App em uma NOVA VERSÃO.
+7. Publique os arquivos da v0.11.1 no GitHub Pages.
+8. Sincronize o Orion.
+
+RECUPERAÇÃO
+- restaurarUltimoBackupOrion(): restauração de emergência. Exige digitar RESTAURAR e cria outro backup antes de restaurar.
+- importarConciliacaoJulAgo2026(): permanece disponível apenas como último recurso. Agora exige digitar IMPORTAR HISTORICO e cria backup antes de substituir dados operacionais.
+
+NÃO execute importarConciliacaoJulAgo2026() durante uma atualização normal.
