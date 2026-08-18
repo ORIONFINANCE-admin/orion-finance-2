@@ -1,0 +1,47 @@
+ORION FINANCE 2.0 v0.11.1 — INSTALAÇÃO SEGURA
+
+IMPORTANTE
+Esta revisão foi criada especificamente para preservar o histórico durante a migração para a estrutura 1.8.0.
+
+ORDEM
+1. NÃO execute importarConciliacaoJulAgo2026().
+2. No Apps Script, substitua integralmente o Code.gs pelo arquivo Orion_Finance_2.0_AppsScript_v0.11.1.txt.
+3. Salve.
+4. Execute atualizarEstruturaOrionV18().
+5. A rotina fará primeiro uma pré-validação.
+6. Se a estrutura for reconhecida, será criado automaticamente um NOVO Google Sheets de backup antes de qualquer migração.
+7. A migração inserirá somente as colunas necessárias e criará as novas abas EVENTOS e EVENTO_RESERVAS.
+8. Ao final, confira no Registro de execução:
+   - mensagem de sucesso;
+   - URL do backup pré-migração.
+9. Se quiser exibir novamente a URL, execute mostrarUltimoBackupOrion().
+10. Reimplante o Web App como NOVA VERSÃO.
+11. Publique o pacote Orion_Finance_2.0_v0.11.1.zip no GitHub Pages.
+12. Abra o Orion e sincronize.
+
+O QUE A MIGRAÇÃO VERIFICA
+- cabeçalho reconhecido antes de escrever;
+- IDs duplicados;
+- quantidade de CONTAS, TRANSACOES e DIVIDAS;
+- conjunto exato dos IDs antes/depois;
+- soma de valor das transações;
+- saldos das contas;
+- valores original/atual das dívidas.
+
+SE ALGO NÃO BATER
+A migração interrompe e NÃO marca a base como 1.8.0. O backup criado permanece no Google Drive.
+
+RECUPERAÇÃO
+mostrarUltimoBackupOrion()
+- mostra ID e URL do último backup automático.
+
+restaurarUltimoBackupOrion()
+- restauração de emergência;
+- exige digitar RESTAURAR;
+- cria outra cópia de segurança antes da restauração.
+
+importarConciliacaoJulAgo2026()
+- último recurso para reconstruir a conciliação histórica Jul/Ago 2026;
+- NÃO deve ser usada numa atualização normal;
+- exige digitar IMPORTAR HISTORICO;
+- cria backup automático antes de substituir dados operacionais.
