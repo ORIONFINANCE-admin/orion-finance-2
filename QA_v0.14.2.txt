@@ -1,0 +1,43 @@
+ORION FINANCE 2.0 — QA v0.14.2
+================================
+
+ESCOPO
+------
+Hotfix frontend para dois problemas observados em Safari/iPhone na v0.14.1:
+1. FAB (+) aparecendo no topo da Home.
+2. Home/grid esticando o card de saldo e empurrando contas para baixo.
+
+CAUSA IDENTIFICADA
+------------------
+- A Home usa CSS Grid. Com height:100% e alinhamento padrão stretch, o Safari podia distribuir o espaço livre entre as linhas implícitas, aumentando artificialmente a altura do card de saldo.
+- O FAB dependia de position:fixed em uma interface com múltiplas camadas legadas de CSS e viewport dinâmica do Safari.
+
+CORREÇÃO
+--------
+- Home: grid-auto-rows:max-content e align-content:start. Cada bloco usa apenas sua altura intrínseca.
+- Assinatura "Produzido por João" foi movida para dentro da Home e volta a participar do fluxo, definindo o fim real do conteúdo.
+- FAB foi movido no DOM para dentro da barra inferior fixa e agora usa position:absolute em relação à própria navegação. Não depende mais do cálculo de viewport do Safari.
+- Assets renomeados para mobile-v0142.css/js e cache PWA atualizado para orion-mobile-v14-2 para impedir mistura com CSS anterior.
+
+VALIDAÇÕES EXECUTADAS
+---------------------
+- Todos os 23 arquivos JavaScript passaram em node --check.
+- Nenhum ID duplicado no HTML mobile.
+- mobile-v0142.css e mobile-v0142.js referenciados corretamente.
+- Nenhuma referência do shell PWA aos assets mobile-v0141.*.
+- Service Worker registra ?v=0142 e cache orion-mobile-v14-2.
+- Recursos locais listados no Service Worker verificados no pacote.
+- FAB confirmado como filho direto da barra bottom-nav no DOM.
+- Home confirmada com grid-auto-rows:max-content e align-content:start.
+
+LIMITAÇÃO
+---------
+Foi tentado um render headless com Chromium local, mas o processo não concluiu dentro do limite do ambiente. Portanto, não estou classificando um teste visual real de Safari/iPhone como concluído. A validação final do comportamento de viewport deve ser feita no aparelho após publicação.
+
+BACKEND / DADOS
+---------------
+Frontend-only.
+Apps Script permanece v0.14.0.
+Schema permanece 1.9.0.
+Não executar migração novamente.
+Não reimportar histórico.
