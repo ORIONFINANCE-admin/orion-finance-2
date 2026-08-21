@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#081326">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Orion">
+  <link rel="apple-touch-icon" sizes="180x180" href="../assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+  <title>Orion Finance</title><script>(()=>{const V="0.14.0",K="orion_front_build";try{if(localStorage.getItem(K)!==V){localStorage.setItem(K,V);if("caches" in window)caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith("orion-mobile-")).map(k=>caches.delete(k))));if("serviceWorker" in navigator)navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.update()));}}catch(e){console.warn("Atualização Orion",e)}})();</script>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="../core/theme.css?v=0140">
+  <link rel="stylesheet" href="./mobile-v0140.css">
+
+  <script>
+    (function(){
+      window.__orionBootErrors=[];
+      function showBootError(message){
+        window.__orionBootErrors.push(String(message||"Erro desconhecido"));
+        document.documentElement.dataset.bootError="true";
+        var box=document.getElementById("bootErrorBox");
+        if(box){box.textContent="Falha ao iniciar: "+String(message||"erro desconhecido");box.hidden=false;}
+      }
+      window.addEventListener("error",function(e){showBootError(e.message||e.error);});
+      window.addEventListener("unhandledrejection",function(e){showBootError(e.reason&&e.reason.message?e.reason.message:e.reason);});
+      window.__orionShowBootError=showBootError;
+    })();
+  </script>
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <header class="topbar">
+      <div class="top-brand-wrap"><span class="app-brand-mark" data-brand-mark></span><div><span class="eyebrow">ORION FINANCE</span><h1 id="viewTitle">Como está seu dinheiro?</h1></div></div>
+      <div class="top-profile"><button id="profileSwitchBtn" type="button" class="profile-switch" data-open-profile><span id="activeProfileDot">J</span><span><small>PERFIL</small><strong id="activeProfileName">João</strong></span><b>⌄</b></button></div><div class="top-actions"><button id="syncTopBtn" class="sync-state" aria-label="Sincronização"><span id="syncStateDot">●</span><small id="syncStateText">Local</small></button></div>
+    </header>
+    <div id="bootErrorBox" class="boot-error-box" hidden></div>
+
+    <aside id="syncBanner" class="sync-banner hidden">
+      <span id="syncBannerText">Há dados mais recentes disponíveis.</span>
+      <button id="syncBannerBtn">Sincronizar</button>
+    </aside><aside id="cajuBanner" class="sync-banner caju-banner hidden"><span>Caju: confirmação mensal pendente.</span><button id="cajuConfirmBtn">Registrar</button></aside>
+
+    <main id="mainContent" class="content">
+      <section id="homeView" class="view home-v13">
+        <article class="home-balance-card premium-surface">
+          <div class="home-balance-head"><div class="balance-title-row"><button id="compactHealth" class="compact-health" type="button" data-insight="recomendacao" aria-label="Saúde financeira"><span class="compact-health-dot"></span><b id="compactHealthScore">—</b><small id="compactHealthLabel">Em análise</small></button><span>Saldo total</span></div><button id="toggleBalanceVisibility" type="button" aria-label="Ocultar ou mostrar valores">◉</button></div>
+          <strong id="saldoTotal">R$ 0,00</strong>
+          <div class="home-balance-grid">
+            <div><small>Entradas</small><b id="entradasMes">R$ 0,00</b></div>
+            <div><small>Saídas</small><b id="saidasMes">R$ 0,00</b></div>
+            <div><small>Resultado</small><b id="resultadoMes">R$ 0,00</b></div>
+            <div><small>Dinheiro livre</small><b id="freeMoneyValue">R$ 0,00</b></div>
+          </div>
+        </article>
+
+        <div class="home-intelligence-grid legacy-insights" aria-hidden="true">
+          <button type="button" class="home-intelligence-card health-card-v13 insight-trigger" data-insight="recomendacao">
+            <div class="home-intelligence-title"><span>♡</span><strong>Saúde Financeira</strong></div>
+            <div class="health-v13-body"><span id="financialHealthRing" class="health-v13-ring"><b id="financialHealthPercent">0%</b></span><div><b id="financialHealthLabel">Em análise</b><p id="financialHealthHint">O Orion está construindo sua leitura.</p></div></div>
+            <div class="health-bar"><span id="financialHealthBar"></span></div>
+            <span id="financialHealthPulse" class="hidden">✦</span>
+            <span id="financialUsageShare" class="hidden">0%</span><span id="financialCommitmentShare" class="hidden">0%</span><span id="financialReserveShare" class="hidden">0%</span>
+            <span id="financialHealthTips" class="home-card-foot">Toque para compreender este índice ›</span>
+          </button>
+          <button type="button" class="home-intelligence-card radar-card-v13" id="openMovementsFromRadar">
+            <div class="home-intelligence-title"><span>◎</span><strong>Radar Orion</strong></div>
+            <b id="radarInsightTitle">Observando o seu padrão</b>
+            <p id="radarInsightText">O Orion destacará o padrão mais relevante do período.</p>
+            <div id="radarClues" class="hidden"></div>
+            <span class="home-card-foot">Ver leitura completa ›</span>
+          </button>
+        </div>
+
+        <section class="home-accounts-section">
+          <div class="section-head inline-link-head"><h2>Contas</h2><div class="section-head-actions"><button id="addAccountBtn" class="text-btn">+ Conta</button></div></div>
+          <div id="accountsList" class="account-stack compact-account-stack"></div>
+        </section>
+
+        <article id="eventsHomeCard" class="home-next-card premium-surface hidden">
+          <div class="section-head compact"><div><small class="eyebrow">PRÓXIMA DECISÃO</small><h2>Evento</h2></div><button id="openEventsFromHome" class="text-btn text-link-btn">Abrir</button></div>
+          <div id="eventsHomeSummary"></div>
+        </article>
+
+        <div class="home-secondary-data" aria-hidden="true">
+          <span id="commitmentsTotal">R$ 0,00</span><div id="commitmentsSummary"></div>
+          <div id="recentList"></div><button id="openMovementsFromHome" type="button"></button><button id="openAccountsFromHome" type="button"></button>
+          <div id="lastSyncHome">Dados locais</div>
+        </div>
+      </section>
+
+      <section id="movementsView" class="view hidden">
+        <div class="section-head"><h2>Movimentações</h2></div>
+        <details class="recurring-accordion">
+          <summary class="recurring-summary">
+            <div>
+              <small class="eyebrow">PLANEJAMENTO</small>
+              <h2>Despesas recorrentes</h2>
+              <p id="recurringToggleHint" class="recurring-summary-hint">Toque para visualizar ou recolher.</p>
+            </div>
+            <div class="recurring-summary-meta">
+              <strong id="recurringToggleCount">0 ativas</strong>
+              <span class="accordion-chevron">⌄</span>
+            </div>
+          </summary>
+          <section class="recurring-panel">
+            <div class="section-head compact"><div><small class="eyebrow">PLANEJAMENTO</small><h2>Despesas recorrentes</h2></div><button id="addRecurringBtn" class="text-btn">+ Recorrente</button></div>
+            <p class="section-note">Previsão editável. O histórico só muda quando você registra o movimento real.</p>
+            <div id="recurringList" class="recurring-list"></div>
+          </section>
+        </details>
+        <div class="section-head compact movements-headline">
+          <div><small class="eyebrow">EXTRATO</small><h2>Histórico</h2></div>
+        </div>
+        <div id="allMovements" class="movement-list"></div>
+      </section>
+
+      <section id="debtsView" class="view hidden debts-view-premium">
+        <div class="section-head debts-heading"><div><small class="eyebrow">MAPA DE COMPROMISSOS</small><h2>Dívidas</h2></div><button id="addDebtBtn" class="debt-add-btn">＋ Nova</button></div>
+        <article class="debt-summary debt-summary-premium">
+          <div class="debt-summary-main"><small>Total em aberto</small><strong id="debtsTotal">R$ 0,00</strong></div>
+          <div class="debt-summary-grid">
+            <div><small>Ativas</small><strong id="debtsActiveCount">0</strong></div>
+            <div><small>Quitado</small><strong id="debtsPaidPercent">0%</strong></div>
+            <div><small>Próximo</small><strong id="debtsNextDue">—</strong></div>
+          </div>
+        </article>
+        <div class="section-head compact debt-list-title"><div><small class="eyebrow">ACOMPANHAMENTO</small><h2>Seus compromissos</h2></div></div>
+        <div id="debtsList" class="debt-list debt-list-premium"></div>
+      </section>
+      <section id="investmentsView" class="view hidden investment-gated-view">
+        <div class="section-head"><h2>Investimentos</h2></div>
+
+        <section id="investmentSetupPanel" class="investment-setup-flyout hidden" aria-hidden="true" aria-labelledby="investmentSetupTitle">
+          <form id="investmentSetupForm" class="investment-setup-form">
+            <div class="investment-setup-mark">✦</div>
+            <small class="eyebrow">BASE DE SEGURANÇA</small>
+            <h2 id="investmentSetupTitle">Antes de investir, defina sua reserva.</h2>
+            <p>Informe apenas seu salário bruto mensal. O Orion sugere começar com 4 meses, mas você pode ajustar.</p>
+            <label>Salário bruto mensal<input id="grossSalaryInput" type="text" inputmode="decimal" placeholder="Ex.: 3.000,00" required></label>
+            <label>Meses de reserva<input id="reserveMonthsInput" type="number" min="1" max="24" step="1" value="4" required></label>
+            <div class="reserve-suggestion"><small>Meta sugerida</small><strong id="reserveSuggestionValue">R$ 0,00</strong><span id="reserveSuggestionText">4 meses do salário bruto</span></div>
+            <label class="toggle-line investment-target-toggle"><span>Aplicar esta meta à reserva</span><input id="applyReserveSuggestion" type="checkbox" checked></label>
+            <div class="investment-setup-actions"><button type="submit">Confirmar base</button></div>
+          </form>
+        </section>
+
+        <article class="reserve-card">
+          <div class="reserve-head">
+            <div>
+              <small>ETAPA 1</small>
+              <h3>Reserva de emergência</h3>
+            </div>
+            <button id="editReserveBtn" class="text-btn">Editar</button>
+          </div>
+          <strong id="reserveAmount">R$ 0,00 / R$ 0,00</strong>
+          <div class="reserve-progress"><span id="reserveBar"></span></div>
+          <div class="reserve-meta"><span id="reservePercent">0%</span><span id="reserveStatus">Comece pela base</span></div>
+        </article>
+
+        <div id="unlockMessage" class="unlock-message"></div>
+
+        <section id="learningInvestments" class="investment-learning hidden">
+          <div class="section-head"><h2>Familiarização</h2></div>
+          <div class="learning-grid">
+            <article class="learning-card">
+              <span class="learning-icon">🏢</span>
+              <strong>FIIs</strong>
+              <p>Comece entendendo renda imobiliária, vacância, dividendos e riscos.</p>
+            </article>
+            <article class="learning-card">
+              <span class="learning-icon">📈</span>
+              <strong>Ações</strong>
+              <p>Explore empresas, fundamentos e indicadores sem transformar isso em ordem de compra.</p>
+            </article>
+          </div>
+
+          <div class="investment-search">
+            <input id="tickerInput" placeholder="Ex.: PETR4">
+            <button id="tickerSearchBtn">Analisar</button>
+          </div>
+          <p class="disclaimer">Indicadores quantitativos para apoio à análise. Não constituem recomendação.</p>
+          <div id="investmentResult"></div>
+
+          <div class="investment-radar-legacy hidden"><div class="section-head"><h2>Radar</h2></div><div id="radarList" class="radar-list"></div></div>
+        </section>
+      </section>
+
+      <section id="eventsView" class="view hidden events-view">
+        <div class="section-head"><div><small class="eyebrow">DECISÕES FUTURAS</small><h2>Eventos</h2></div><button id="addEventBtn" class="text-btn">+ Evento</button></div>
+        <article class="event-money-summary premium-surface"><div><small>Reservado</small><strong id="eventsReservedTotal">R$ 0,00</strong></div><div><small>Ainda necessário</small><strong id="eventsRemainingTotal">R$ 0,00</strong></div><div><small>Eventos ativos</small><strong id="eventsCount">0</strong></div></article>
+        <div id="eventsList" class="events-list"></div>
+      </section>
+
+      <section id="settingsView" class="view hidden settings-view-page">
+        <div class="settings-page-hero"><span class="app-brand-mark" data-brand-mark></span><div><small class="eyebrow">ORION</small><h2>Configurações</h2><p>Personalize o Orion sem sair da experiência principal.</p></div></div>
+        <button class="settings-profile-card" type="button" data-open-profile><span class="settings-profile-avatar" data-profile-avatar>J</span><div><small>PERFIL LOCAL · OFFLINE</small><strong data-profile-name>João</strong><p>Toque para ver e editar seu perfil neste dispositivo.</p></div><b>›</b></button>
+        <div class="settings-page-list">
+          <button class="settings-page-card premium-settings-entry" type="button" data-open-premium><span>✦</span><div><strong>Modo Premium</strong><small>Comparativos, cenários e relatório avançado</small></div><b>›</b></button>
+          <button class="settings-page-card" data-settings="appearance"><span>◐</span><div><strong>Aparência</strong><small>Tema completo, ícone visual e animações</small></div><b>›</b></button>
+          <button class="settings-page-card" data-settings="api"><span>⌁</span><div><strong>API</strong><small>Conexão com a base central</small></div><b>›</b></button>
+          <button class="settings-page-card" data-settings="preferences"><span>⚙</span><div><strong>Preferências</strong><small>Privacidade, perfil local e base financeira</small></div><b>›</b></button>
+          <button class="settings-page-card" data-settings="data"><span>↻</span><div><strong>Dados</strong><small>Sincronização, diagnóstico e exportação</small></div><b>›</b></button>
+          <button class="settings-page-card" data-settings="about"><span>ⓘ</span><div><strong>Sobre</strong><small>Estrutura, identidade e autoria</small></div><b>›</b></button>
+        </div>
+      </section>
+
+      <section id="evolutionView" class="view hidden evolution-view">
+        <div class="game-sky"><div class="game-orbit orbit-a"></div><div class="game-orbit orbit-b"></div><div class="game-profile"><span class="game-kicker">EVOLUÇÃO ORION</span><div class="level-emblem" id="levelEmblem">1</div><h2 id="levelTitle">Nível 1 · Observador</h2><p id="levelXP">0 XP</p><div class="xp-track"><span id="xpBar"></span></div><small id="xpNext">100 XP para o próximo nível</small></div></div>
+        <div class="game-section"><div class="section-head"><h2>Emblemas</h2></div><div id="achievementGrid" class="achievement-grid"></div></div>
+        <div class="game-section"><div class="section-head"><h2>Medalhas evolutivas</h2></div><div id="medalGrid" class="medal-grid"></div></div>
+        <div class="game-section"><div class="section-head"><h2>Último XP</h2></div><div id="xpHistory" class="xp-history"></div></div>
+      </section>
+      <footer class="produced-signature mobile-signature" aria-label="Crédito do projeto"><span>✦</span> Produzido por João <span>✦</span></footer>
+    </main>
+
+    <button id="quickAddBtn" class="fab" aria-label="Lançar nova movimentação"><span class="fab-icon" aria-hidden="true">＋</span></button>
+
+    <nav class="bottom-nav five premium-nav" aria-label="Navegação principal">
+      <button class="nav-btn" data-view="movementsView" aria-label="Movimentações"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M7 4v15m0 0-3-3m3 3 3-3M17 20V5m0 0-3 3m3-3 3 3"/></svg></span><small>Mov.</small></button>
+      <button class="nav-btn" data-view="investmentsView" aria-label="Investimentos"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 18 9 13l3 3 7-9"/><path d="M14 7h5v5"/></svg></span><small>Invest.</small></button>
+      <button class="nav-btn active nav-home-center" data-view="homeView" aria-label="Início"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M3.5 11 12 4l8.5 7v8.5H15v-5h-6v5H3.5z"/></svg></span><small>Início</small></button>
+      <button class="nav-btn" data-view="eventsView" aria-label="Planejar"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M5 4v3M19 4v3M4 9h16M5 6h14v14H5z"/><path d="m9 14 2 2 4-5"/></svg></span><small>Planejar</small></button>
+      <button id="moreNavBtn" class="nav-btn" type="button" aria-label="Mais opções"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></span><small>Mais</small></button>
+    </nav>
+  </div>
+
+
+  <div id="moreDrawerBackdrop" class="more-drawer-backdrop hidden"></div>
+  <aside id="moreDrawer" class="more-drawer" aria-hidden="true">
+    <div class="more-drawer-head"><div><small>ORION</small><h2>Mais</h2></div><button id="closeMoreDrawer" type="button" aria-label="Fechar">×</button></div>
+    <button type="button" data-more-view="debtsView"><span>▣</span><div><strong>Dívidas</strong><small>Acompanhar e quitar obrigações</small></div><b>›</b></button>
+    <button type="button" data-more-view="eventsView"><span>◫</span><div><strong>Eventos</strong><small>Decisões futuras e reservas</small></div><b>›</b></button>
+    <button type="button" data-open-profile><span>◉</span><div><strong>Perfis</strong><small>Patrimônios e alocações</small></div><b>›</b></button>
+    <button type="button" id="moreSettingsBtn"><span>⚙</span><div><strong>Configurações</strong><small>Aparência, dados e conexão</small></div><b>›</b></button>
+    <button type="button" id="moreAccountsBtn"><span>▤</span><div><strong>Contas</strong><small>Visão consolidada e perfis</small></div><b>›</b></button>
+    <div class="more-drawer-signature">✦ Produzido por João ✦</div>
+  </aside>
+
+  <dialog id="profileDialog" class="sheet-dialog profile-center-dialog"><div class="dialog-handle"></div><div class="profile-manager-head"><div><small>PERFIS FINANCEIROS</small><h2>Patrimônios</h2><p>Separe de quem é o dinheiro sem criar contas bancárias fictícias.</p></div><button type="button" data-close="profileDialog" class="movement-close">×</button></div><div id="profilesList" class="profiles-list"></div><button id="newProfileBtn" type="button" class="full-action secondary-action">＋ Criar perfil</button><section id="newProfileForm" class="new-profile-form hidden"><label>Nome<input id="newProfileName" maxlength="40" placeholder="Ex.: Maria Estela"></label><label>Tipo<select id="newProfileType"><option value="dependente">Dependente</option><option value="patrimonio">Patrimônio / objetivo</option></select></label><label>Descrição<input id="newProfileSubtitle" maxlength="60" placeholder="Ex.: Construção financeira"></label><button id="saveNewProfileBtn" type="button" class="full-action">Criar perfil</button></section><div class="profile-manager-note">A conta bancária continua sendo física. O perfil define de quem é aquela parcela do patrimônio.</div></dialog>
+
+  <dialog id="premiumDialog" class="sheet-dialog premium-center-dialog"><div class="dialog-handle"></div><button class="dialog-back" type="button" data-close="premiumDialog">← Voltar</button><div class="premium-center-hero"><span class="premium-star">✦</span><small>ORION PREMIUM</small><h2>Mais profundidade, sem tirar o essencial do Free.</h2><p>O Premium amplia a leitura dos seus dados. Movimentações, contas, dívidas, eventos e sincronização continuam essenciais.</p><span id="premiumCurrentPlan" class="premium-current-plan">Plano atual · Free</span></div><div class="premium-feature-grid"><article><span>↔</span><strong>Comparativo 30 dias</strong><small>Variação de gastos e ritmo recente.</small></article><article><span>◎</span><strong>Radar avançado</strong><small>Concentração, pressão e cobertura financeira.</small></article><article><span>◫</span><strong>Cenários</strong><small>Teste uma compra antes de comprometer o dinheiro livre.</small></article><article><span>⇩</span><strong>Relatório executivo</strong><small>Resumo local para guardar ou revisar.</small></article></div><section id="premiumLockedPanel" class="premium-lock-panel"><strong>Premium disponível para teste local</strong><p>Enquanto não há autenticação ou cobrança, a ativação fica somente neste dispositivo e pode ser revertida quando quiser.</p><button id="activatePremiumBtn" type="button" class="full-action">Ativar Premium neste dispositivo</button></section><section id="premiumActivePanel" class="premium-active-panel hidden"><div class="premium-score-card"><div><small>ÍNDICE AVANÇADO</small><strong id="premiumScore">0/100</strong><span id="premiumPressure">Sem leitura</span></div><div class="premium-score-orbit">✦</div></div><div class="premium-metric-grid"><div><small>Gastos · 30 dias</small><strong id="premiumSpend30">R$ 0,00</strong><span id="premiumTrend">0%</span></div><div><small>Média diária</small><strong id="premiumDaily">R$ 0,00</strong><span>últimos 30 dias</span></div><div><small>Concentração</small><strong id="premiumTopCategory">Sem dados</strong><span id="premiumTopShare">0%</span></div><div><small>Dinheiro livre</small><strong id="premiumFreeMoney">R$ 0,00</strong><span>estimativa protegida</span></div></div><div class="premium-detail-list"><div><span>Compromissos × renda</span><strong id="premiumCommitmentRatio">0%</strong></div><div><span>Cobertura da reserva</span><strong id="premiumReservePct">0%</strong></div><div><span>Cobertura dos eventos</span><strong id="premiumEventsPct">0%</strong></div><div><span>Dívidas em aberto</span><strong id="premiumDebtOpen">R$ 0,00</strong></div></div><div class="premium-scenario"><small>CENÁRIO RÁPIDO</small><strong>Se eu gastar...</strong><div class="premium-scenario-row"><input id="premiumScenarioAmount" inputmode="decimal" placeholder="0,00"><button id="premiumScenarioBtn" type="button">Simular</button></div><div id="premiumScenarioResult" class="premium-scenario-result">Informe um valor para testar o impacto no dinheiro livre.</div></div><button id="premiumReportBtn" type="button" class="full-action">Gerar relatório executivo</button><button id="deactivatePremiumBtn" type="button" class="full-action secondary-action">Voltar ao Free neste dispositivo</button></section></dialog>
+
+  <dialog id="settingsDialog" class="sheet-dialog settings-dialog"><div class="dialog-handle"></div><h2>Configurações</h2>
+    <button class="settings-row" type="button" data-open-profile><span>◉</span><div><strong>Perfis financeiros</strong><small>Patrimônios e alocações</small></div><b>›</b></button>
+    <button class="settings-row" data-settings="appearance"><span>◐</span><div><strong>Aparência</strong><small>Tema, animações e identidade</small></div><b>›</b></button>
+    <button class="settings-row" data-settings="api"><span>⌁</span><div><strong>API</strong><small>Conexão com a base central</small></div><b>›</b></button>
+    <button class="settings-row" data-settings="preferences"><span>⚙</span><div><strong>Preferências</strong><small>Privacidade visual</small></div><b>›</b></button>
+    <button class="settings-row" data-settings="data"><span>↻</span><div><strong>Dados</strong><small>Sincronização</small></div><b>›</b></button>
+    <button class="settings-row" data-settings="about"><span>ⓘ</span><div><strong>Sobre</strong><small>Orion Finance v0.14.0</small></div><b>›</b></button><div class="dialog-actions"><button type="button" data-close="settingsDialog" class="secondary">Fechar</button></div>
+  </dialog>
+  <dialog id="accountVisibilityDialog" class="sheet-dialog"><div class="dialog-handle"></div><button class="dialog-back" type="button" data-close="accountVisibilityDialog">← Voltar</button><h2>Visibilidade no dashboard</h2><p>Automático oculta saldo zero. “Sempre mostrar” fixa a instituição; “Ocultar” remove apenas da tela inicial.</p><div id="accountVisibilityList" class="visibility-list"></div><div class="dialog-actions"><button type="button" data-close="accountVisibilityDialog">Concluir</button></div></dialog>
+  <dialog id="appearanceDialog" class="sheet-dialog"><div class="dialog-handle"></div><button class="dialog-back" type="button" data-close="appearanceDialog">← Voltar</button><h2>Aparência</h2><label>Tema<select id="themeSelect"><option value="system">Automático</option><option value="light">Claro</option><option value="dark">Escuro</option></select></label><label class="toggle-line"><span>Animações</span><input id="animationsToggle" type="checkbox"></label><div class="brand-picker"><div class="brand-picker-head"><strong>Identidade visual</strong><small>Cada opção altera paleta, destaques, emblemas e símbolo interno.</small></div><div class="brand-options"><button type="button" class="brand-option" data-brand-option="radar-visionario"><span class="brand-preview" data-brand-preview="radar-visionario"></span><b>Padrão Orion</b><small>Azul profundo + dourado</small></button><button type="button" class="brand-option" data-brand-option="monograma-radar"><span class="brand-preview" data-brand-preview="monograma-radar"></span><b>Azul</b><small>Profundo e confiável</small></button><button type="button" class="brand-option" data-brand-option="visionario"><span class="brand-preview" data-brand-preview="visionario"></span><b>Claro</b><small>Limpo e iluminado</small></button><button type="button" class="brand-option" data-brand-option="minimal"><span class="brand-preview" data-brand-preview="minimal"></span><b>Monocromático</b><small>Foco e minimalismo</small></button></div></div><div class="dialog-actions"><button type="button" data-close="appearanceDialog">Concluir</button></div></dialog>
+  <dialog id="preferencesDialog" class="sheet-dialog"><div class="dialog-handle"></div><button class="dialog-back" type="button" data-close="preferencesDialog">← Voltar</button><h2>Preferências</h2><label>Nome do perfil local<input id="localProfileName" maxlength="40" placeholder="João"></label><label class="toggle-line"><span>Ocultar valores</span><input id="hideValuesToggle" type="checkbox"></label><button id="accountVisibilityBtn" class="full-action secondary-action">Visibilidade no dashboard</button><button id="financialBaseBtn" class="full-action secondary-action">Base de segurança / salário</button><div class="dialog-actions"><button type="button" data-close="preferencesDialog">Concluir</button></div></dialog>
+  <dialog id="dataDialog" class="sheet-dialog"><div class="dialog-handle"></div><button class="dialog-back" type="button" data-close="dataDialog">← Voltar</button><h2>Dados</h2><p id="dataStatus">Base local ativa.</p><button id="syncSettingsBtn" class="full-action">Sincronizar agora</button>
+<button id="exportSheetBtn" class="full-action secondary-action">Exportar planilha (.xlsx)</button>
+<button id="diagnosticsBtn" class="full-action secondary-action">Diagnóstico Orion</button>
+<div id="diagnosticsBox" class="diagnostics-box hidden"></div>
+<button id="resetOrionBtn" class="danger-action">Zerar Orion</button>
+<small class="danger-note">Apaga contas, lançamentos, dívidas, alocações e transferências localmente e na planilha. Estrutura, categorias, instituições, frases, token e preferências são preservados.</small><div class="dialog-actions"><button type="button" data-close="dataDialog" class="secondary">Fechar</button></div></dialog>
+  <dialog id="aboutDialog" class="sheet-dialog about-orion-dialog"><div class="dialog-handle"></div><button class="dialog-back" type="button" data-close="aboutDialog">← Voltar</button>
+    <div class="about-orion-hero"><span class="about-brand-mark" data-brand-mark></span><small>ORION FINANCE</small><h2>Clareza para entender.<br>Estrutura para decidir.</h2><div class="about-version">v0.14.0 · estrutura 1.9.0</div></div>
+    <div class="about-flow"><span>Registrar</span><b>→</b><span>Compreender</span><b>→</b><span>Decidir</span><b>→</b><span>Evoluir</span></div>
+    <div class="about-grid"><div><strong>Local-first</strong><small>O app abre pela base local e sincroniza automaticamente quando há conexão.</small></div><div><strong>Perfis e alocações</strong><small>Separe patrimônios sem inventar contas bancárias.</small></div><div><strong>Base central</strong><small>Google Sheets mantém a continuidade entre Mobile e Desktop.</small></div><div><strong>Offline real</strong><small>Registre e consulte mesmo sem conexão. Pendências sincronizam depois.</small></div></div>
+    <div class="about-signature"><span>✦</span><strong>Produzido por João</strong></div>
+    <div class="dialog-actions"><button type="button" data-close="aboutDialog">Fechar</button></div>
+  </dialog>
+
+
+  <dialog id="recurringDialog" class="sheet-dialog">
+    <form id="recurringForm">
+      <div class='dialog-handle'></div>
+      <h2 id="recurringDialogTitle">Nova despesa recorrente</h2>
+      <input id="recurringId" type="hidden">
+      <label>Nome<input id="recurringName" placeholder="Ex.: Aluguel" required></label>
+      <label>Valor previsto<input id="recurringValue" type="text" inputmode="decimal" placeholder="0,00" required></label>
+      <label>Categoria<select id="recurringCategory" required></select></label>
+      <label>Frequência<select id="recurringFrequency">
+        <option value="mensal">Mensal</option><option value="quinzenal">A cada 15 dias</option>
+        <option value="semanal">Semanal</option><option value="anual">Anual</option>
+        <option value="personalizado">Personalizado</option>
+      </select></label>
+      <label>Dia de referência/vencimento<input id="recurringDueDay" type="number" min="1" max="31" placeholder="Ex.: 10"></label>
+      <label>Conta usual<select id="recurringAccount"></select></label>
+      <label>Pagamento<select id="recurringPayment">
+        <option value="pix">Pix</option><option value="debito">Débito</option><option value="credito">Crédito</option>
+        <option value="dinheiro">Dinheiro</option><option value="boleto">Boleto</option>
+      </select></label>
+      <label>Observação<textarea id="recurringNote" rows="2"></textarea></label>
+      <div class="dialog-actions"><button type="button" data-close="recurringDialog" class="secondary">Cancelar</button><button type="submit">Salvar</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="transferDialog" class="sheet-dialog"><form id="transferForm"><div class="dialog-handle"></div><h2>Transferir saldo</h2><label>De<select id="transferFrom" required></select></label><label>Para<select id="transferTo" required></select></label><label>Valor<input id="transferValue" type="text" inputmode="decimal" required></label><label>Data<input id="transferDate" type="date" required></label><label>Observação<textarea id="transferNote" rows="2"></textarea></label><div class="dialog-actions"><button type="button" data-close="transferDialog" class="secondary">Cancelar</button><button>Transferir</button></div></form></dialog>
+  <dialog id="tokenDialog" class="sheet-dialog">
+    <form id="tokenForm" method="dialog">
+      <div class="dialog-handle"></div>
+      <h2>Conectar ao Orion</h2>
+      <p>Cole a chave criada no Apps Script. Ela ficará salva apenas neste dispositivo.</p>
+      <label>Token
+        <input id="tokenInput" type="password" autocomplete="off" required>
+      </label>
+      <div class="dialog-actions">
+        <button value="cancel" class="secondary">Cancelar</button>
+        <button id="saveTokenBtn" value="default">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="accountDialog" class="sheet-dialog">
+    <form id="accountForm">
+      <div class="dialog-handle"></div>
+      <h2>Nova conta</h2>
+      <label>Instituição<select id="accountInstitution" required></select></label>
+      <label>Nome<input id="accountName" placeholder="Ex.: Conta principal" required></label>
+      <label>Tipo<select id="accountType">
+        <option value="corrente">Conta corrente</option>
+        <option value="pagamento">Conta de pagamento</option>
+        <option value="beneficio">Benefício</option>
+        <option value="poupanca">Poupança</option>
+        <option value="carteira">Carteira</option>
+      </select></label>
+      <label>Saldo inicial<input id="accountBalance" type="text" inputmode="decimal" placeholder="0,00"></label>
+      <div class="dialog-actions">
+        <button type="button" data-close="accountDialog" class="secondary">Cancelar</button>
+        <button type="submit">Salvar conta</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="movementDialog" class="sheet-dialog movement-dialog-v13">
+    <form id="movementForm">
+      <div class="dialog-handle"></div>
+      <div class="movement-dialog-head"><h2>Novo movimento</h2><button type="button" data-close="movementDialog" class="movement-close" aria-label="Fechar">×</button></div><div id="quickContributionChips" class="quick-contribution-chips hidden"></div>
+      <div class="segmented movement-segments">
+        <button type="button" class="segment active" data-type="saida">Saída</button>
+        <button type="button" class="segment" data-type="entrada">Entrada</button>
+        <button type="button" class="segment" data-type="transferencia">Transferência</button>
+        <button type="button" class="segment" data-type="rendimento">Rendimento</button>
+      </div>
+      <label class="money-field compact-field">Valor<input id="movementValue" type="text" inputmode="numeric" value="0,00" autocomplete="off" required></label>
+      <label class="compact-field normal-movement-field">Descrição<input id="movementDescription" placeholder="Ex.: Mercado" required></label>
+      <div id="transferMovementFields" class="transfer-movement-fields hidden">
+        <label>Conta de origem<select id="movementTransferFrom"></select></label>
+        <label>Conta de destino<select id="movementTransferTo"></select></label>
+      </div>
+      <div class="movement-two-col normal-movement-field">
+        <label>Categoria<select id="movementCategory" required></select></label>
+        <label>Conta<select id="movementAccount" required></select></label>
+      </div>
+      <div class="movement-two-col">
+        <label class="normal-movement-field">Pagamento<select id="movementPayment"><option value="pix">Pix</option><option value="debito">Débito</option><option value="credito">Crédito</option><option value="dinheiro">Dinheiro</option><option value="boleto">Boleto</option><option value="rendimento_juros">Rendimento / Juros</option><option value="outro">Outro</option></select></label>
+        <label>Data<input id="movementDate" type="date" required></label>
+      </div>
+      <label id="movementPurposeWrap" class="compact-field">Finalidade<select id="movementPurpose"><option value="">Selecione</option><option value="gasto_pessoal">Gasto pessoal</option><option value="conta_compromisso">Conta / compromisso</option><option value="reserva">Reserva</option><option value="aporte">Aporte / investimento</option><option value="organizacao_saldo">Organização de saldo</option><option value="repasse">Repasse</option><option value="reembolso">Reembolso</option><option value="presente">Presente / ajuda</option><option value="outro">Outra</option></select></label>
+      <label class="normal-movement-field optional-event-field">Vincular a evento<select id="movementEvent"><option value="">Nenhum</option></select></label>
+      <details class="movement-more-details"><summary>Mais detalhes</summary><label>Observação<textarea id="movementNote" rows="2" maxlength="180"></textarea></label></details>
+      <div class="dialog-actions movement-dialog-actions"><button type="button" data-close="movementDialog" class="secondary">Cancelar</button><button type="submit" id="movementSubmitBtn">Registrar</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="accountProfileDialog" class="sheet-dialog account-profile-dialog">
+    <div class="dialog-handle"></div>
+    <div class="account-profile-head"><button type="button" data-close="accountProfileDialog" class="account-profile-back">←</button><div><small>PERFIL DA CONTA</small><h2 id="accountProfileTitle">Conta</h2></div></div>
+    <article class="account-profile-summary"><span id="accountProfileMark">O</span><div><strong id="accountProfileName">Conta</strong><small id="accountProfileType">Instituição</small></div><b id="accountProfileBalance">R$ 0,00</b></article>
+    <div id="accountProfileMetrics" class="account-profile-metrics"></div>
+    <section class="account-profile-extract"><div class="section-head compact"><h3>Extrato filtrado</h3><button id="accountProfileClear" type="button" class="text-btn">Limpar</button></div><div class="account-profile-filter"><label>De<input id="accountProfileStart" type="date"></label><label>Até<input id="accountProfileEnd" type="date"></label></div><small class="account-profile-edit-hint">Toque em uma movimentação para corrigir um registro.</small><div id="accountProfileMovements" class="account-profile-movements"></div></section>
+    <div id="accountAllocationSummary" class="account-allocation-summary hidden"></div>
+  </dialog>
+
+  <dialog id="debtDialog" class="sheet-dialog"><form id="debtForm">
+    <div class="dialog-handle"></div><h2>Nova dívida</h2>
+    <label>Descrição<input id="debtDescription" required></label><label>Credor<input id="debtCreditor" required></label>
+    <label>Tipo<select id="debtType"><option value="informal">Informal</option><option value="formal">Formal</option></select></label>
+    <label>Valor original<input id="debtOriginal" type="text" inputmode="decimal" required></label>
+    <label>Pagamento<select id="debtPaymentMode"><option value="livre">Livre / sem data fixa</option><option value="parcelada">Parcelada</option></select></label>
+    <label>Valor planejado<input id="debtPlanned" type="text" inputmode="decimal" placeholder="Opcional"></label>
+    <label>Vencimento<input id="debtDue" type="date"></label><label>Observação<textarea id="debtNote" rows="2"></textarea></label>
+    <div class="dialog-actions"><button type="button" data-close="debtDialog" class="secondary">Cancelar</button><button>Salvar</button></div>
+  </form></dialog>
+  <dialog id="debtPaymentDialog" class="sheet-dialog"><form id="debtPaymentForm">
+    <div class="dialog-handle"></div><h2>Registrar pagamento</h2><input id="paymentDebtId" type="hidden">
+    <label>Valor<input id="paymentValue" type="text" inputmode="decimal" required></label><label>Conta<select id="paymentAccount" required></select></label>
+    <label>Forma<select id="paymentMethod"><option value="pix">Pix</option><option value="debito">Débito</option><option value="dinheiro">Dinheiro</option><option value="boleto">Boleto</option></select></label>
+    <label>Data<input id="paymentDate" type="date" required></label><label>Observação<textarea id="paymentNote" rows="2"></textarea></label>
+    <div class="dialog-actions"><button type="button" data-close="debtPaymentDialog" class="secondary">Cancelar</button><button>Registrar</button></div>
+  </form></dialog>
+
+
+  <dialog id="reserveDialog" class="sheet-dialog">
+    <form id="reserveForm">
+      <div class="dialog-handle"></div>
+      <h2>Reserva de emergência</h2>
+      <p>Defina sua meta e quanto já está reservado.</p>
+      <label>Valor-alvo<input id="reserveTarget" type="text" inputmode="decimal" placeholder="0,00" required></label>
+      <label>Valor atual<input id="reserveCurrent" type="text" inputmode="decimal" placeholder="0,00" required></label>
+      <div class="dialog-actions">
+        <button type="button" data-close="reserveDialog" class="secondary">Cancelar</button>
+        <button type="submit">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <dialog id="resetDialog" class="sheet-dialog">
+    <div class="dialog-handle"></div><h2>Zerar Orion</h2>
+    <p>Esta ação apaga seus dados financeiros e todo o progresso sincronizado. A estrutura do aplicativo continuará intacta.</p>
+    <p><strong>Deseja realmente apagar todos os dados financeiros e o progresso?</strong></p>
+    <p id="resetStatus" class="reset-status hidden" aria-live="polite"></p>
+    <div class="dialog-actions">
+      <button type="button" data-close="resetDialog" class="secondary">Cancelar</button>
+      <button id="confirmResetBtn" type="button" class="danger-action">Sim, apagar tudo</button>
+    </div>
+  </dialog>
+
+
+  <dialog id="exportDialog" class="sheet-dialog">
+    <div class="dialog-handle"></div><h2>Exportar planilha</h2>
+    <p>Será baixada uma cópia atual da base Orion em Excel (.xlsx).</p>
+    <p>Isso não altera nem apaga nenhum dado.</p>
+    <div class="dialog-actions">
+      <button type="button" data-close="exportDialog" class="secondary">Cancelar</button>
+      <button id="confirmExportBtn" type="button">Confirmar exportação</button>
+    </div>
+  </dialog>
+
+
+  <dialog id="syncLoadingDialog" class="system-dialog sync-loading-dialog">
+    <div class="sync-loading-content">
+      <div class="sync-spinner" aria-hidden="true"></div>
+      <h2>Sincronizando</h2>
+      <p id="syncLoadingText">Atualizando sua base com segurança…</p>
+      <div class="sync-loading-track"><span></span></div>
+    </div>
+  </dialog>
+
+  <div id="institutionStatementOverlay" class="institution-statement-overlay hidden" aria-hidden="true">
+    <section class="institution-statement-card" role="dialog" aria-modal="true" aria-labelledby="institutionStatementTitle">
+      <div class="institution-statement-head">
+        <div><small class="eyebrow">EXTRATO FILTRADO</small><h2 id="institutionStatementTitle">Instituição</h2><p id="institutionStatementSubtitle">Movimentações desta instituição</p></div>
+        <button id="institutionStatementClose" class="statement-close" type="button" aria-label="Fechar extrato">×</button>
+      </div>
+      <div id="institutionStatementSummary" class="institution-statement-summary"></div>
+      <div id="institutionStatementMovements" class="institution-statement-movements"></div>
+    </section>
+  </div>
+
+  <dialog id="insightDialog" class="sheet-dialog detail-dialog"><div class="dialog-handle"></div><button class="dialog-back" type="button" data-close="insightDialog">← Voltar</button><div id="insightDialogContent"></div></dialog>
+  <dialog id="achievementDialog" class="sheet-dialog detail-dialog"><div class="dialog-handle"></div><button class="dialog-back" type="button" data-close="achievementDialog">← Voltar</button><div id="achievementDialogContent"></div></dialog>
+  <dialog id="eventDialog" class="sheet-dialog"><form id="eventForm"><div class="dialog-handle"></div><button class="dialog-back" type="button" data-close="eventDialog">← Voltar</button><h2>Novo evento</h2><input id="eventId" type="hidden"><label>Nome<input id="eventName" required placeholder="Ex.: Concurso em Palhoça"></label><div class="form-grid"><label>Data<input id="eventDate" type="date" required></label><label>Horário<input id="eventTime" type="time"></label></div><label>Local<input id="eventLocation" placeholder="Opcional"></label><div class="form-grid"><label>Prioridade<select id="eventPriority"><option value="baixa">Baixa</option><option value="media" selected>Média</option><option value="alta">Alta</option><option value="essencial">Essencial</option></select></label><label>Custo estimado<input id="eventCost" inputmode="decimal" placeholder="0,00"></label></div><label>Margem de segurança (%)<input id="eventMargin" inputmode="decimal" value="0"></label><label>Observação<textarea id="eventNote" rows="3"></textarea></label><div class="dialog-actions"><button type="submit">Salvar evento</button></div></form></dialog>
+  <dialog id="eventDetailDialog" class="sheet-dialog detail-dialog"><div class="dialog-handle"></div><button class="dialog-back" type="button" data-close="eventDetailDialog">← Voltar</button><div id="eventDetailContent"></div></dialog>
+
+  <dialog id="contributionDialog" class="sheet-dialog contribution-dialog"><form id="contributionForm"><div class="dialog-handle"></div><div class="movement-dialog-head"><div><small>APORTE</small><h2 id="contributionTitle">Aporte</h2></div><button type="button" data-close="contributionDialog" class="movement-close">×</button></div><p id="contributionSubtitle" class="contribution-subtitle">Todos os campos já estão definidos. Informe apenas o valor.</p><input id="contributionProfileId" type="hidden"><label class="money-field">Valor<input id="contributionValue" type="text" inputmode="numeric" value="0,00" autocomplete="off" required></label><div class="contribution-prefill"><div><small>Perfil</small><strong id="contributionProfileName">—</strong></div><div><small>Conta física</small><strong id="contributionAccountName">Mercado Pago</strong></div><div><small>Finalidade</small><strong>Futuro / construção financeira</strong></div><div><small>Data</small><strong id="contributionDateLabel">Hoje</strong></div></div><div class="dialog-actions"><button type="button" data-close="contributionDialog" class="secondary">Cancelar</button><button type="submit">Aportar</button></div></form></dialog>
+  <div id="toast" class="toast hidden"></div>
+  <div id="reward" class="reward hidden"><div class="reward-dot">✓</div><p id="rewardText"></p></div>
+
+  <script type="module" src="./mobile-v0140.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+ORION FINANCE 2.0 — QA v0.14.0
+===============================
+
+VALIDAÇÕES EXECUTADAS
+---------------------
+1. JavaScript
+- 24 arquivos JS passaram por node --check.
+- 0 erros de sintaxe.
+
+2. Apps Script
+- arquivo v0.14.0 passou por node --check para validação sintática.
+- schema declarado: 1.9.0.
+- novas tabelas: PERFIS, ALOCACOES, MOVIMENTOS_ALOCACAO.
+- migração mantém backup completo antes da alteração.
+- tabelas financeiras antigas não recebem novas colunas nesta migração.
+
+3. HTML
+- Mobile: 0 IDs duplicados.
+- Desktop: 0 IDs duplicados.
+
+4. PWA
+- Service Worker: orion-mobile-v14-0.
+- 30 recursos essenciais listados no shell.
+- todos os 30 caminhos existem no pacote.
+- fallback de index.html fica restrito à navegação.
+- JS/CSS não recebem HTML como fallback.
+- instalação não ignora falha de precache.
+
+5. Perfis / alocações
+- IndexedDB atualizado para versão 7.
+- stores novos presentes no STORE_MAP.
+- perfil principal é criado sem reescrever o histórico.
+- perfil gerenciado usa alocações vinculadas a conta física.
+- aporte não cria TRANSACAO nem TRANSFERENCIA falsa.
+- aporte cria MOVIMENTOS_ALOCACAO + atualiza ALOCACOES.
+
+6. Mercado Pago
+- saldos históricos de cofrinhos continuam contribuindo para o total da instituição.
+- linhas legadas Reserva / Maria Estela deixam de ser tratadas como contas visuais independentes no card consolidado.
+- nenhum histórico é apagado.
+
+7. UX Mobile
+- Premium removido da experiência navegável.
+- Evolução removida da navegação.
+- Radar comportamental da Home ocultado.
+- Radar de investimentos antigo ocultado.
+- Saúde permanece apenas como indicador compacto junto ao saldo.
+- navegação: Mov. | Invest. | Início | Planejar | Mais.
+- Configurações movidas para Mais.
+- botão flutuante continua apenas +.
+- Movimentações: lista preparada para scroll interno.
+- Perfil da Conta: extrato preparado para scroll interno.
+- filtro De/Até continua sem overflow horizontal.
+- Até continua iniciando na data atual.
+- proteção de inputs >=16px do iPhone preservada pela base CSS anterior.
+
+8. Sincronização
+- boot Mobile renderiza local primeiro e dispara sync automático em background.
+- evento online dispara nova tentativa.
+- sem token ou sem rede não bloqueia a renderização local.
+- Desktop também tenta sincronização automaticamente após o render local.
+
+9. Frases
+- novo motor local por contexto.
+- histórico recente de 30 frases evita repetição imediata.
+- registros comuns podem mostrar somente confirmação funcional.
+- aporte/rendimento/dívida/reserva forçam mensagem contextual.
+
+LIMITAÇÃO DO AMBIENTE
+---------------------
+Foi tentado teste end-to-end com Chromium/Playwright em servidor localhost.
+O navegador do ambiente bloqueou a navegação para 127.0.0.1 com
+ERR_BLOCKED_BY_ADMINISTRATOR. Portanto, não foi marcado como concluído um teste
+visual/runtime real nem um reload offline real neste ambiente.
+
+O teste offline final deve ser realizado no iPhone após a publicação e após uma
+primeira abertura online, para que o novo Service Worker possa instalar seu cache.
+
+CHECKLIST NO IPHONE
+-------------------
+1. Abrir online e aguardar estado Atualizado.
+2. Fechar o PWA.
+3. Desligar Wi-Fi e dados móveis.
+4. Abrir o Orion novamente.
+5. Confirmar Home, Mov., contas e lançamento funcionando.
+6. Criar um lançamento offline.
+7. Reativar internet e confirmar sincronização automática.
+8. Criar perfil Maria Estela.
+9. Abrir + e usar Aporte · Maria Estela.
+10. Informar somente o valor e confirmar.
+11. Alternar entre João e Maria Estela e conferir patrimônios separados.
+12. Confirmar que o saldo físico do Mercado Pago não foi artificialmente duplicado.
