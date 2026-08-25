@@ -1,0 +1,53 @@
+ORION FINANCE v0.1 — GOOGLE SHEETS / APPS SCRIPT
+================================================
+
+Esta versão é uma BASE NOVA.
+Ela NÃO preserva, importa ou converte o histórico do Orion 0.14.x.
+
+RECOMENDAÇÃO
+------------
+Use uma nova planilha Google Sheets para o Orion v0.1.
+Isso mantém o recomeço realmente limpo e evita misturar estruturas antigas.
+
+PASSOS
+------
+1. Crie uma nova planilha no Google Sheets.
+2. Extensões > Apps Script.
+3. Apague o código padrão e cole o conteúdo de:
+   Orion_Finance_AppsScript_v0.1.txt
+4. Salve.
+5. Execute manualmente a função:
+   configurarOrionV01()
+6. Autorize o script quando o Google solicitar.
+7. Crie um token privado quando a função solicitar.
+8. Implantar > Nova implantação > Aplicativo da Web.
+9. Executar como: você.
+10. Quem tem acesso: escolha a opção compatível com sua conta e uso pessoal.
+11. Copie a URL /exec.
+12. No Orion: Mais > Sincronização.
+13. Cole a URL e o MESMO token criado no Apps Script.
+
+SINCRONIZAÇÃO
+-------------
+- O Orion abre primeiro pelo IndexedDB local.
+- Se estiver online e configurado, sincroniza automaticamente.
+- Se ficar offline, continua funcionando.
+- Quando a internet voltar, tenta sincronizar novamente.
+- O botão de sincronização permite forçar uma tentativa manual.
+
+ABAS CRIADAS
+------------
+META
+PERFIS
+CONTAS
+TRANSACOES
+OBJETIVOS
+ALOCACOES
+
+REINICIAR DE NOVO
+-----------------
+A função reiniciarBaseOrionV01() apaga as abas desta v0.1 e recria a estrutura vazia.
+Ela exige digitar exatamente:
+ZERAR ORION
+
+Use somente se quiser apagar a base v0.1 inteira do Google Sheets.
