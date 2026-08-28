@@ -1,0 +1,33 @@
+ORION FINANCE v0.1 — QA DA BUILD CONSOLIDADA
+Data: 2026-08-28
+
+ESCOPO DESTA BUILD
+- João H. como único usuário visível.
+- Remoção da experiência de múltiplos perfis.
+- Inter: conta corrente, CDB Mais Limite e fatura separados.
+- Nova área Dívidas em Planejar.
+- Dívida formal/informal; juros opcionais; data-base; pagamentos vinculados; simulador.
+- Sincronização da nova entidade DIVIDAS no Apps Script.
+
+VALIDAÇÕES EXECUTADAS
+[OK] mobile/orion.js passou em `node --check`.
+[OK] Apps Script passou em verificação sintática JavaScript após cópia temporária para extensão .js.
+[OK] HTML sem IDs duplicados.
+[OK] Referências locais de script, CSS e imagens presentes no pacote.
+[OK] Não existem na interface textos/controles: Trocar perfil, Perfis financeiros, Criar perfil, Perfil atual, dependentes ou patrimônios gerenciados.
+[OK] Goal/aporte não exige seleção de perfil; internamente pertence exclusivamente a profile_joao.
+[OK] IndexedDB elevado de versão 1 para 2 e store `debts` adicionada por migração.
+[OK] Snapshot local/backup/sync inclui `debts`.
+[OK] Apps Script schema 0.1.1 cria e sincroniza a aba DIVIDAS.
+[OK] CDB Mais Limite do Inter permanece separado do saldo corrente.
+[OK] Compra Inter + Crédito continua sem reduzir conta corrente no momento da compra e entra em fatura.
+[OK] Pagamento da fatura permanece marcado como liquidação, sem duplicar despesa mensal.
+[OK] Pagamento de dívida reduz a conta escolhida e fica vinculado via `debt_id`.
+[OK] Exclusão de pagamento de dívida recalcula automaticamente o saldo da dívida.
+[OK] Dívida sem juros não cresce automaticamente.
+[OK] Dívida com juros usa capitalização estimada a partir da data-base e pagamentos.
+[OK] Exemplo matemático: R$ 754,83 a 4,99% a.m. -> ~R$ 792,50 após 1 mês; taxa efetiva anual ~79,38%.
+[OK] Service Worker/cache-busting atualizados para v=0105.
+
+OBSERVAÇÃO DE QA VISUAL
+Foi tentada renderização headless Chromium no ambiente de execução, mas o processo não concluiu dentro do limite por restrições do Chromium/DBus do container. Portanto esta build NÃO é apresentada como validada em Safari/iPhone real. A validação estrutural e sintática acima foi concluída; o comportamento visual final em iOS deve ser conferido no aparelho após publicação.

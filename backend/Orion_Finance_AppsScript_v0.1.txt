@@ -1,0 +1,235 @@
+/**
+ * ORION FINANCE v0.1 — Google Apps Script
+ * Base nova, sem importação do histórico 0.14.x.
+ * Modelo de sincronização: snapshot completo + revisão incremental.
+ */
+
+const ORION_VERSION = '0.1';
+const ORION_SCHEMA = '0.1.1';
+const ORION_TOKEN_KEY = 'ORION_V01_TOKEN';
+const ORION_SHEETS = {
+  meta: 'META',
+  profiles: 'PERFIS',
+  accounts: 'CONTAS',
+  transactions: 'TRANSACOES',
+  goals: 'OBJETIVOS',
+  allocations: 'ALOCACOES',
+  debts: 'DIVIDAS'
+};
+
+function configurarOrionV01() {
+  const ui = SpreadsheetApp.getUi();
+  const answer = ui.alert(
+    'Orion Finance v0.1',
+    'Esta configuração cria uma BASE NOVA para o Orion v0.1. Ela não importa nem converte o histórico antigo. Continuar?',
+    ui.ButtonSet.YES_NO
+  );
+  if (answer !== ui.Button.YES) return;
+
+  garantirEstruturaOrionV01_();
+  const token = PropertiesService.getScriptProperties().getProperty(ORION_TOKEN_KEY);
+  if (!token) configurarTokenOrionV01();
+  ui.alert('Orion v0.1 configurado.\nSchema: ' + ORION_SCHEMA + '\nRevisão: ' + lerRevisao_());
+}
+
+function configurarTokenOrionV01() {
+  const ui = SpreadsheetApp.getUi();
+  const result = ui.prompt(
+    'Token do Orion v0.1',
+    'Digite um token privado para proteger a sincronização. Pode ser uma sequência longa criada por você.',
+    ui.ButtonSet.OK_CANCEL
+  );
+  if (result.getSelectedButton() !== ui.Button.OK) return;
+  const token = String(result.getResponseText() || '').trim();
+  if (token.length < 12) throw new Error('Use um token com pelo menos 12 caracteres.');
+  PropertiesService.getScriptProperties().setProperty(ORION_TOKEN_KEY, token);
+  ui.alert('Token salvo.');
+}
+
+function reiniciarBaseOrionV01() {
+  const ui = SpreadsheetApp.getUi();
+  const result = ui.prompt(
+    'REINICIAR BASE ORION v0.1',
+    'Isto APAGA todos os dados das abas do Orion v0.1 neste Google Sheets. Digite ZERAR ORION para confirmar.',
+    ui.ButtonSet.OK_CANCEL
+  );
+  if (result.getSelectedButton() !== ui.Button.OK) return;
+  if (String(result.getResponseText()).trim() !== 'ZERAR ORION') {
+    ui.alert('Confirmação incorreta. Nada foi alterado.');
+    return;
+  }
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  Object.values(ORION_SHEETS).forEach(name => {
+    const sh = ss.getSheetByName(name);
+    if (sh) sh.clear();
+  });
+  garantirEstruturaOrionV01_();
+  ui.alert('Base Orion v0.1 reiniciada. Revisão 0.');
+}
+
+function doGet(e) {
+  try {
+    garantirEstruturaOrionV01_();
+    const action = String((e && e.parameter && e.parameter.action) || 'health');
+    if (action === 'health') return json_({ok:true, version:ORION_VERSION, schema:ORION_SCHEMA, revision:lerRevisao_()});
+    return json_({ok:false, error:'Ação GET não suportada.'});
+  } catch (err) {
+    return json_({ok:false, error:String(err && err.message || err)});
+  }
+}
+
+function doPost(e) {
+  const lock = LockService.getScriptLock();
+  lock.waitLock(20000);
+  try {
+    garantirEstruturaOrionV01_();
+    const body = JSON.parse(String(e && e.postData && e.postData.contents || '{}'));
+    validarToken_(body.token);
+    if (body.action !== 'sync') return json_({ok:false,error:'Ação inválida.'});
+    return json_(sincronizar_(body));
+  } catch (err) {
+    return json_({ok:false, error:String(err && err.message || err)});
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function sincronizar_(body) {
+  const remoteRevision = lerRevisao_();
+  const localRevision = Number(body.revision || 0);
+  const dirty = Boolean(body.dirty);
+
+  // Servidor está à frente: dispositivo deve receber a base remota.
+  if (localRevision < remoteRevision) {
+    return {ok:true, mode:'pull', revision:remoteRevision, snapshot:lerSnapshot_()};
+  }
+
+  // Mesma revisão e sem mudanças locais: já está sincronizado.
+  if (localRevision === remoteRevision && !dirty) {
+    return {ok:true, mode:'noop', revision:remoteRevision};
+  }
+
+  // Base nova, mesma revisão com mudanças, ou cliente propositalmente à frente:
+  // grava snapshot completo e avança uma revisão do servidor.
+  if (!body.snapshot || !body.snapshot.data) throw new Error('Snapshot ausente.');
+  escreverSnapshot_(body.snapshot);
+  const nextRevision = Math.max(remoteRevision, localRevision) + 1;
+  escreverMeta_('revision', String(nextRevision));
+  escreverMeta_('updated_at', new Date().toISOString());
+  return {ok:true, mode:'push', revision:nextRevision};
+}
+
+function garantirEstruturaOrionV01_() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (!ss) throw new Error('Vincule o Apps Script a uma planilha Google Sheets.');
+
+  const meta = obterOuCriarAba_(ss, ORION_SHEETS.meta, ['chave','valor']);
+  if (meta.getLastRow() < 2) {
+    meta.getRange(2,1,4,2).setValues([
+      ['version', ORION_VERSION],
+      ['schema', ORION_SCHEMA],
+      ['revision', '0'],
+      ['updated_at', new Date().toISOString()]
+    ]);
+  } else {
+    escreverMeta_('version', ORION_VERSION);
+    escreverMeta_('schema', ORION_SCHEMA);
+    if (lerMeta_('revision') === '') escreverMeta_('revision','0');
+  }
+
+  obterOuCriarAba_(ss, ORION_SHEETS.profiles, ['id','json','updated_at']);
+  obterOuCriarAba_(ss, ORION_SHEETS.accounts, ['id','json','updated_at']);
+  obterOuCriarAba_(ss, ORION_SHEETS.transactions, ['id','json','updated_at']);
+  obterOuCriarAba_(ss, ORION_SHEETS.goals, ['id','json','updated_at']);
+  obterOuCriarAba_(ss, ORION_SHEETS.allocations, ['id','json','updated_at']);
+  obterOuCriarAba_(ss, ORION_SHEETS.debts, ['id','json','updated_at']);
+}
+
+function obterOuCriarAba_(ss, name, headers) {
+  let sh = ss.getSheetByName(name);
+  if (!sh) sh = ss.insertSheet(name);
+  if (sh.getLastRow() === 0) sh.getRange(1,1,1,headers.length).setValues([headers]);
+  const current = sh.getRange(1,1,1,headers.length).getValues()[0].map(String);
+  if (current.join('|') !== headers.join('|')) {
+    sh.clear();
+    sh.getRange(1,1,1,headers.length).setValues([headers]);
+  }
+  sh.setFrozenRows(1);
+  return sh;
+}
+
+function escreverSnapshot_(snapshot) {
+  const data = snapshot.data || {};
+  escreverTabela_(ORION_SHEETS.profiles, data.profiles || []);
+  escreverTabela_(ORION_SHEETS.accounts, data.accounts || []);
+  escreverTabela_(ORION_SHEETS.transactions, data.transactions || []);
+  escreverTabela_(ORION_SHEETS.goals, data.goals || []);
+  escreverTabela_(ORION_SHEETS.allocations, data.allocations || []);
+  escreverTabela_(ORION_SHEETS.debts, data.debts || []);
+}
+
+function escreverTabela_(sheetName, items) {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  if (sh.getLastRow() > 1) sh.getRange(2,1,sh.getLastRow()-1,3).clearContent();
+  if (!items.length) return;
+  const rows = items.map(obj => [
+    String(obj.id || ''),
+    JSON.stringify(obj),
+    String(obj.updated_at || obj.created_at || new Date().toISOString())
+  ]);
+  sh.getRange(2,1,rows.length,3).setValues(rows);
+}
+
+function lerSnapshot_() {
+  const revision = lerRevisao_();
+  return {
+    version: ORION_VERSION,
+    revision: revision,
+    updated_at: lerMeta_('updated_at') || new Date().toISOString(),
+    data: {
+      profiles: lerTabela_(ORION_SHEETS.profiles),
+      accounts: lerTabela_(ORION_SHEETS.accounts),
+      transactions: lerTabela_(ORION_SHEETS.transactions),
+      goals: lerTabela_(ORION_SHEETS.goals),
+      allocations: lerTabela_(ORION_SHEETS.allocations),
+      debts: lerTabela_(ORION_SHEETS.debts)
+    }
+  };
+}
+
+function lerTabela_(sheetName) {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(sheetName);
+  const last = sh.getLastRow();
+  if (last < 2) return [];
+  return sh.getRange(2,1,last-1,2).getValues().map(row => {
+    try { return JSON.parse(String(row[1] || '{}')); }
+    catch (_) { return null; }
+  }).filter(Boolean);
+}
+
+function validarToken_(token) {
+  const expected = PropertiesService.getScriptProperties().getProperty(ORION_TOKEN_KEY);
+  if (!expected) throw new Error('Token do Orion não configurado no Apps Script.');
+  if (String(token || '') !== expected) throw new Error('Token inválido.');
+}
+
+function lerRevisao_() { return Number(lerMeta_('revision') || 0); }
+function lerMeta_(key) {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ORION_SHEETS.meta);
+  if (!sh || sh.getLastRow() < 2) return '';
+  const rows = sh.getRange(2,1,sh.getLastRow()-1,2).getValues();
+  const found = rows.find(r => String(r[0]) === String(key));
+  return found ? String(found[1] || '') : '';
+}
+function escreverMeta_(key, value) {
+  const sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(ORION_SHEETS.meta);
+  const rows = sh.getLastRow() >= 2 ? sh.getRange(2,1,sh.getLastRow()-1,2).getValues() : [];
+  const idx = rows.findIndex(r => String(r[0]) === String(key));
+  if (idx >= 0) sh.getRange(idx+2,2).setValue(String(value));
+  else sh.appendRow([String(key), String(value)]);
+}
+
+function json_(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}

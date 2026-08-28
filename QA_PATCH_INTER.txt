@@ -1,0 +1,21 @@
+ORION FINANCE v0.1 — QA PATCH INTER / PERFIS
+
+VALIDAÇÕES
+- mobile/orion.js: node --check OK
+- mobile/service-worker.js: node --check OK
+- IDs HTML duplicados: 0
+- "Perfis financeiros" removido do hub: OK
+- "Trocar perfil" mantido: OK
+- Campo CDB Mais Limite na conta Inter: OK
+- Valor padrão CDB Mais Limite: R$ 504,33
+- Inter com saldo corrente R$ 0,00 permanece visível se CDB/fatura > 0: OK
+- Compra Inter + Crédito não reduz conta corrente: regra implementada
+- Compra Inter + Crédito continua contando como despesa mensal: regra implementada
+- Fatura em aberto calculada pelas compras crédito não liquidadas: regra implementada
+- Pagamento de fatura reduz conta corrente uma vez: regra implementada
+- Pagamento de fatura não duplica despesa mensal: regra implementada
+- Caju + Crédito continua usando saldo Caju e não usa lógica de fatura: preservado
+- Service Worker/cache incrementado para nova revisão: OK
+
+NOTA
+O CDB Mais Limite é exibido como garantia/investimento separado. Ele não é somado ao saldo disponível da conta corrente nem ao dinheiro livre.

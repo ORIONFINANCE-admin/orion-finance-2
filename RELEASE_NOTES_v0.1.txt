@@ -1,0 +1,53 @@
+ORION FINANCE v0.1 — RELEASE REVISADA
+=====================================
+
+Esta é a v0.1 corrigida após a reprovação visual da primeira build.
+
+Principais correções:
+- CSS mobile reescrito do zero;
+- zero overflow horizontal na matriz testada;
+- header compacto e responsivo;
+- título sem truncamento agressivo, com até duas linhas;
+- card de saldo e métricas contidos na viewport;
+- estados vazios sem texto escapando;
+- filtros de Mov. responsivos;
+- bottom navigation menor e estável;
+- FAB apenas em Início e Mov.;
+- Planejar usa + Objetivo como ação própria;
+- Mais não possui FAB;
+- formulários preservam 16px no iOS;
+- Service Worker alinhado aos assets da release;
+- runtime guard para overflow horizontal.
+
+A lógica financeira e o banco novo da v0.1 foram preservados.
+
+
+HOTFIX FINALIZADO (v0.1 concluído)
+- 4 contas padrão pré-criadas: Bradesco, Inter, Mercado Pago e Caju.
+- Contas com saldo exatamente R$ 0,00 ficam ocultas na Home, mas continuam editáveis em Gerenciar.
+- Home limitada aos últimos 3 lançamentos.
+- Navegação principal em 3 blocos: Mov., Início e Planejar.
+- Ajustes e opções adicionais concentrados no menu do perfil.
+- Lançamento novo abre em estado neutro, sem pré-selecionar Saída.
+- Correção de seletor de cor e melhorias de toque em iPhone.
+- Cache/Service Worker revisados para reduzir conflito de versão no PWA.
+
+
+PATCH INTER / PERFIS
+- Removida opção redundante “Perfis financeiros” do hub de configurações.
+- Inter mantém saldo de conta corrente separado do CDB Mais Limite.
+- CDB Mais Limite inicia em R$ 504,33 e pode ser editado na conta Inter.
+- Compra Inter + Crédito gera fatura e não reduz saldo da conta corrente no momento da compra.
+- Pagamento da fatura reduz a conta corrente uma vez e não duplica a despesa mensal.
+- Inter continua visível na Home com saldo corrente R$ 0,00 se houver CDB Mais Limite ou fatura em aberto.
+
+
+REFINAMENTO CONSOLIDADO — SINGLE PROFILE + DÍVIDAS
+- Interface agora é exclusivamente João H.; removida experiência de troca/criação de outros perfis.
+- Objetivos e aportes permanecem no planejamento pessoal.
+- Nova área Dívidas em Planejar: formal/informal, com ou sem juros.
+- Saldo com juros é estimado a partir da data-base e pagamentos vinculados.
+- Pagamentos de dívida geram saída na conta e recalculam automaticamente a obrigação.
+- Simulador de quitação com pagamento mensal fixo.
+- Inter preserva conta corrente, CDB Mais Limite e fatura como camadas separadas.
+- Backend passou a sincronizar a aba DIVIDAS (schema 0.1.1).

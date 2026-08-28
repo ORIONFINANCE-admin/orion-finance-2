@@ -1,0 +1,113 @@
+ORION FINANCE v0.1 — QA DE RELEASE
+===================================
+Status: RELEASE CANDIDATE APROVADA NOS BLOQUEIOS EXECUTÁVEIS DESTE AMBIENTE
+Data: 25/08/2026
+
+OBJETIVO DESTA REVISÃO
+----------------------
+A build anterior da v0.1 foi rejeitada por falhas visuais evidentes em iPhone: overflow horizontal, header cortado, métricas fora da viewport, bottom bar superdimensionada, estados vazios extrapolando cards e FAB sem contexto.
+
+Esta revisão substitui a camada visual mobile por uma implementação única e limpa, sem CSS acumulado de versões anteriores.
+
+BLOQUEIOS DE RELEASE EXECUTADOS
+-------------------------------
+1. JavaScript
+   - mobile/orion.js: node --check OK
+   - mobile/service-worker.js: node --check OK
+
+2. DOM
+   - 116 IDs analisados
+   - IDs duplicados: 0
+
+3. Service Worker
+   - 8 recursos essenciais de shell verificados
+   - recursos ausentes: 0
+   - cache: orion-v0-1-release-1
+   - assets versionados: ?v=0101
+
+4. Matriz visual renderizada em Chromium headless
+   Viewports:
+   - 320x568
+   - 360x780
+   - 375x812
+   - 390x844
+   - 414x896
+   - 430x932
+
+   Telas verificadas:
+   - Início
+   - Movimentações
+   - Planejar
+   - Mais
+   - modal Novo movimento
+
+   Resultado nos tamanhos principais 375/390/414/430:
+   - overflow horizontal: 0 px
+   - bottom nav dentro da viewport: OK
+   - modal dentro da viewport: OK
+   - FAB Início: visível
+   - FAB Mov.: visível
+   - FAB Planejar: oculto
+   - FAB Mais: oculto
+
+   Resultado adicional 320/360:
+   - overflow horizontal: 0 px
+
+5. Header
+   - grid limitado à viewport
+   - título aceita até duas linhas
+   - perfil usa largura máxima e ellipsis apenas no nome do perfil
+   - ação de sync compacta
+
+6. Home
+   - card de saldo limitado a 100% da largura útil
+   - quatro métricas usam colunas minmax(0,1fr)
+   - valores não podem aumentar a largura do card
+   - estados vazios usam overflow-wrap
+   - listas e cards respeitam a largura do shell
+
+7. Movimentações
+   - filtros permanecem dentro da viewport
+   - Extrato é a área de scroll principal da tela
+   - documento externo não precisa rolar para consultar a lista
+   - FAB contextual
+
+8. Planejar
+   - sem FAB redundante
+   - + Objetivo é a ação contextual da tela
+   - cards e resumo responsivos
+
+9. Mais
+   - sem FAB
+   - ações compactadas
+   - Recomeçar do zero permanece destacado como destrutivo
+
+10. Formulários iOS
+    - inputs/selects/textarea: 16px
+    - proteção contra zoom automático do Safari preservada
+    - modal de movimento limitado a 94dvh
+    - grid degrada para uma coluna em telas muito estreitas
+
+11. Runtime guard
+    - assertLayout() verifica overflow horizontal após boot, navegação e resize
+    - overflow inesperado é registrado como erro de QA no console
+
+12. Backend / token
+    - configurarOrionV01() chama configurarTokenOrionV01() se não existir token
+    - token mínimo: 12 caracteres
+    - base v0.1 permanece separada da base antiga
+
+LIMITAÇÕES DO AMBIENTE
+----------------------
+O ambiente bloqueia navegação Playwright para localhost/file:// com ERR_BLOCKED_BY_ADMINISTRATOR.
+Para não alegar um teste que não foi executado, o QA visual foi feito renderizando o HTML/CSS real diretamente no Chromium headless. Isso valida geometria, overflow, breakpoints, dialogs e composição visual, mas NÃO equivale a um teste final no Safari real do iPhone.
+
+O teste final obrigatório após publicação continua sendo no iPhone real, principalmente:
+- safe-area com Safari/PWA instalado;
+- teclado;
+- instalação/offline do Service Worker;
+- sync após reconexão.
+
+REGRA DE RELEASE ADOTADA
+------------------------
+Uma futura alteração que gere overflow horizontal, corte da bottom bar ou modal fora da viewport deve reprovar a build antes do empacotamento.
