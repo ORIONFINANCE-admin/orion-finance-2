@@ -1,0 +1,21 @@
+ORION FINANCE v0.3 — GESTÃO PATRIMONIAL LOCAL
+
+Principais mudanças desta build:
+- Operação 100% local em IndexedDB, sem Google Sheets/backend.
+- Novo armazenamento mensal para snapshots patrimoniais.
+- Home mais executiva: exibe a próxima prioridade financeira.
+- Separação gerencial entre despesas de consumo e pagamentos de dívida.
+- Transferências e liquidações de fatura permanecem neutras no resultado mensal.
+- Área de patrimônio com ativos financeiros, passivos, patrimônio líquido e cobertura da reserva.
+- Fechamento mensal com receitas, consumo, pagamentos de dívida, taxa de poupança e comparação patrimonial.
+- Dívidas permanecem tratadas como passivos; quitações negociadas influenciam a ordem de prioridade.
+- Backup local com indicador de recência.
+- Importação de backup validada antes da restauração.
+- Antes de restaurar, o Orion baixa automaticamente uma cópia de segurança do estado atual.
+- Verificador de integridade para detectar vínculos quebrados e valores inválidos sem alterar dados.
+- Cache/PWA atualizado para v0.3.
+
+Compatibilidade:
+- O banco continua usando o mesmo nome (orion_finance_v01), preservando instalações anteriores.
+- A versão do schema sobe para 3 e cria apenas o novo store monthly_snapshots.
+- Backups v0.2 continuam importáveis; monthly_snapshots é opcional em arquivos antigos.
