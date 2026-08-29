@@ -1,0 +1,37 @@
+ORION FINANCE v0.4.2 — QA RELEASE
+
+Correção raiz desta versão
+- O CSS da v0.4.1 possuía regras específicas `.pwa-standalone`, porém nenhuma rotina adicionava essa classe ao documento.
+- Como consequência, no PWA do iOS continuava ativa a regra de Safari comum que somava `safe-area-inset-bottom`, elevando o dock.
+- A v0.4.2 detecta modo standalone de forma síncrona no <head> e novamente no JavaScript durante bootstrap/retorno ao app.
+- Existe também fallback CSS por `@media (display-mode: standalone)`.
+- No PWA instalado, a safe area não é somada uma segunda vez ao bottom do dock.
+
+Dock
+- Altura: 76 px na faixa principal e 72 px em telas <= 390 px.
+- PWA standalone: gap inferior canônico de 6 px (5 px em telas <= 390 px), relativo ao layout viewport já tratado pelo iOS.
+- Safari comum: continua respeitando `env(safe-area-inset-bottom)`.
+- Viewport de conteúdo reserva espaço coerente com o dock para evitar sobreposição.
+- FAB permanece ancorado ao próprio dock.
+
+Filtros de Movimentações
+- Conta e Categoria são controles <select> reais.
+- Toque abre o seletor do sistema no iOS, permitindo escolha direta.
+- Não há mais comportamento de ciclo sequencial por toque.
+
+QA estrutural executado
+- `node --check` em mobile/orion.js: OK.
+- `node --check` em mobile/service-worker.js: OK.
+- IDs HTML duplicados: nenhum.
+- Referências locais de HTML/assets: nenhuma ausente.
+- Manifest JSON válido e display=standalone.
+- Ícones declarados no manifest existem.
+- Chaves de CSS balanceadas.
+- Detecção de standalone está presente no head antes do stylesheet.
+- Selects movementAccountFilterSelect e movementCategoryFilterSelect presentes.
+- Desktop/backend remoto/sincronização não fazem parte da build.
+
+Limitação de QA
+- Este ambiente não executa WebKit/iOS real nem possui um iPhone XR físico.
+- Portanto, a posição visual final do dock no WebKit standalone do iPhone deve ser validada no aparelho.
+- A causa estrutural específica encontrada na v0.4.1 foi corrigida nesta versão.
