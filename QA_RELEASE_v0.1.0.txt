@@ -1,0 +1,16 @@
+ORION FINANCE v0.1.0 — QA RELEASE
+
+Objetivo: baseline limpa da nova evolução.
+
+Verificações automatizadas realizadas:
+- sintaxe JavaScript;
+- IDs HTML duplicados;
+- referências locais principais;
+- service worker/cache com versão própria;
+- ausência de backup/base pessoal empacotados;
+- ausência de chamadas de seed financeiro no bootstrap/reset/restore;
+- banco IndexedDB isolado da v0.4.2;
+- versão exibida atualizada para v0.1.0.
+
+Limite de QA:
+O comportamento definitivo em Safari/PWA no iPhone deve ser validado no dispositivo real, especialmente instalação, cache, importação/restauração e persistência após fechar/reabrir o app.
