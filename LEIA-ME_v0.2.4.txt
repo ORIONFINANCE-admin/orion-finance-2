@@ -1,0 +1,52 @@
+ORION FINANCE — v0.2.4 — PWA DOCK / SAFE-AREA REPAIR
+
+OBJETIVO
+Resolver a faixa vazia excessiva abaixo do dock no PWA instalado no iOS/iPadOS sem alterar dados financeiros, schema ou backup.
+
+AUDITORIA PRÉVIA DA v0.2.3
+- index.html: 384 linhas
+- CSS: 193 linhas
+- JavaScript: 1048 linhas
+- service worker: 71 linhas
+- JS e service worker passaram em node --check
+- nenhum ID HTML duplicado encontrado
+- o JavaScript principal excede o alerta arquitetural de ~350 linhas e deverá ser modularizado em etapa própria; não foi refatorado junto deste reparo visual para evitar misturar mudança estrutural com bug de layout
+- a v0.2.3 continha múltiplas camadas de override para balance-card, bottom-nav e viewport; a área relevante foi consolidada nesta release
+
+CAUSA DO ESPAÇO INFERIOR
+No PWA standalone do iOS/iPadOS, o viewport já reserva fisicamente a região do Home Indicator. A v0.2.3 ainda somava env(safe-area-inset-bottom) ao deslocamento do dock. Na prática, a proteção era aplicada duas vezes, empurrando o dock excessivamente para cima e deixando uma faixa vazia grande abaixo dele.
+
+CORREÇÃO
+- Safari/navegador continua usando safe-area explícita
+- PWA standalone recebe uma regra própria
+- no standalone, o dock avança controladamente sobre a margem já reservada pelo viewport (bottom: -8px)
+- o viewport de conteúdo e o toast foram recalculados com a mesma geometria
+- o card compacto da Home foi preservado
+- overrides acumulados de v0.2.1/v0.2.2 foram consolidados em um único bloco final
+
+CACHE / PWA
+- CSS renomeado para orion-v0204.css
+- JS renomeado para orion-v0204.js
+- APP_VERSION = 0.2.4
+- service worker cache = orion-v0-2-4-pwa-dock-safearea-repair
+- manifest/start_url/scope e estrutura standalone da v0.2.3 foram preservados
+
+DADOS
+- IndexedDB: sem alteração
+- schema: sem alteração
+- regras financeiras: sem alteração
+- backup/import/export: sem alteração
+
+IMPORTANTE
+Este pacote é uma atualização sobre a estrutura atual. Substitua/adicione os arquivos mantendo exatamente as pastas. Não apague a pasta assets nem limpe os dados do site/PWA.
+
+QA EXECUTADO
+- node --check no JS
+- node --check no service worker
+- JSON parse dos manifests
+- IDs duplicados no HTML
+- referências locais principais
+- presença dos arquivos declarados pelo service worker dentro do pacote ou na estrutura assets esperada
+
+LIMITAÇÃO
+O posicionamento foi corrigido com base na geometria observada no screenshot real do PWA e no comportamento standalone do iOS. O teste físico final no iPhone continua sendo necessário; QA estrutural não substitui teste no dispositivo.
